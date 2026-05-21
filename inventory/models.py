@@ -18,6 +18,9 @@ class Material(models.Model):
     def __str__(self):
         return self.material_name
 
+    def current_stock(self, project):
+        return StockTransaction.get_current_stock(project, self)
+
 
 class StockTransaction(models.Model):
     TRANSACTION_TYPES = (
