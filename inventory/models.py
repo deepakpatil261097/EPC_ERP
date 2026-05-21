@@ -32,3 +32,20 @@ class StockTransaction(models.Model):
 
     def __str__(self):
         return f"{self.project} - {self.material}"
+
+    @staticmethod
+    def get_current_stock(project, material):
+        transactions = StockTransaction.objects.filter(
+            project=project,
+            material=material
+        )
+
+        total_in = sum(
+            t.quantity for t in transactions if t.transaction_type == 'IN'
+        )
+
+        total_out = sum(
+            t.quantity for t in transactions if t.transaction_type == 'OUT'
+        )
+
+        return total_in - total_out
