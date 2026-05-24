@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.http import HttpResponse
+
 from .models import (
     Project,
     Material,
@@ -87,24 +89,44 @@ class StockTransactionAdmin(admin.ModelAdmin):
 
 @admin.register(ProjectStockSummary)
 class ProjectStockSummaryAdmin(admin.ModelAdmin):
-    list_display = (
-        'project_name',
-        'material_name',
-        'size',
-        'current_stock',
-    )
 
-    def get_queryset(self, request):
-        return []
+    def changelist_view(self, request, extra_context=None):
 
-    def project_name(self, obj):
-        return ""
+        html = """
+        <h1>Project Stock Summary</h1>
 
-    def material_name(self, obj):
-        return ""
+        <table border="1" cellpadding="10">
+            <tr>
+                <th>Project</th>
+                <th>Material</th>
+                <th>Size</th>
+                <th>Current Stock</th>
+            </tr>
+        """
 
-    def size(self, obj):
-        return ""
+        projects = Project.objects.all()
+        materials = Material.objects.all()
 
-    def current_stock(self, obj):
-        return ""
+        for project in projects:
+
+            for material in materials:
+
+                stock = StockTransaction.get_current_stock(
+                    project,
+                    material
+                )
+
+                if stock > 0:
+
+                    html += f"""
+                    <tr>
+                        <td>{project.project_name}</td>
+                        <td>{material.material_name}</td>
+                        <td>{material.size}</td>
+                        <td>{stock}</td>
+                    </tr>
+                    """
+
+        html += "</table>"
+
+        return HttpResponse(html)
