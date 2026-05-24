@@ -1,4 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import (
+    render,
+    redirect
+)
+
+from django.contrib.auth import (
+    authenticate,
+    login
+)
 
 from .models import (
     Project,
@@ -7,7 +15,53 @@ from .models import (
 )
 
 
+def login_page(request):
+
+    error = ""
+
+    if request.method == "POST":
+
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if user is not None:
+
+            login(request, user)
+
+            return redirect('/home/')
+
+        else:
+
+            error = "Invalid Username or Password"
+
+    return render(
+        request,
+        'inventory/login.html',
+        {'error': error}
+    )
+
+
+def home(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/')
+
+    return render(
+        request,
+        'inventory/home.html'
+    )
+
+
 def dashboard(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/')
 
     projects = Project.objects.all()
     materials = Material.objects.all()

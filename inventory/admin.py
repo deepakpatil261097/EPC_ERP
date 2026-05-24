@@ -29,8 +29,17 @@ class MaterialAdmin(admin.ModelAdmin):
         'site_wise_stock',
     )
 
+    search_fields = (
+        'material_name',
+        'material_code',
+        'size',
+    )
+
     def total_stock(self, obj):
-        transactions = StockTransaction.objects.filter(material=obj)
+
+        transactions = StockTransaction.objects.filter(
+            material=obj
+        )
 
         total_in = sum(
             t.quantity for t in transactions
@@ -47,6 +56,7 @@ class MaterialAdmin(admin.ModelAdmin):
     total_stock.short_description = 'Total Stock'
 
     def site_wise_stock(self, obj):
+
         stock_data = obj.all_project_stock()
 
         return ", ".join(
@@ -59,6 +69,7 @@ class MaterialAdmin(admin.ModelAdmin):
 
 @admin.register(StockTransaction)
 class StockTransactionAdmin(admin.ModelAdmin):
+
     list_display = (
         'project',
         'material',
@@ -79,6 +90,7 @@ class StockTransactionAdmin(admin.ModelAdmin):
     )
 
     def current_stock(self, obj):
+
         return StockTransaction.get_current_stock(
             obj.project,
             obj.material
@@ -90,26 +102,118 @@ class StockTransactionAdmin(admin.ModelAdmin):
 @admin.register(ProjectStockSummary)
 class ProjectStockSummaryAdmin(admin.ModelAdmin):
 
+    change_list_template = None
+
     def changelist_view(self, request, extra_context=None):
 
-        html = """
-        <h1>Project Stock Summary</h1>
-
-        <table border="1" cellpadding="10">
-            <tr>
-                <th>Project</th>
-                <th>Material</th>
-                <th>Size</th>
-                <th>Current Stock</th>
-            </tr>
-        """
+        selected_project = request.GET.get('project')
 
         projects = Project.objects.all()
-        materials = Material.objects.all()
+
+        html = """
+
+        <html>
+
+        <head>
+
+        <title>Project Stock Summary</title>
+
+        <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        >
+
+        </head>
+
+        <body style="background-color:#f5f7fa;">
+
+        <div class="container mt-4">
+
+        <h1 class="mb-4">
+        Project Stock Summary
+        </h1>
+
+        <form method="GET" class="mb-4">
+
+        <div class="row">
+
+        <div class="col-md-4">
+
+        <select
+        name="project"
+        class="form-select"
+        onchange="this.form.submit()"
+        >
+
+        <option value="">
+        All Projects
+        </option>
+
+        """
 
         for project in projects:
 
-            for material in materials:
+            selected = ""
+
+            if selected_project == str(project.id):
+                selected = "selected"
+
+            html += f"""
+
+            <option
+            value="{project.id}"
+            {selected}
+            >
+            {project.project_name}
+            </option>
+
+            """
+
+        html += """
+
+        </select>
+
+        </div>
+
+        </div>
+
+        </form>
+
+        <div class="card shadow-sm">
+
+        <div class="card-body">
+
+        <table class="table table-bordered table-hover">
+
+        <thead class="table-dark">
+
+        <tr>
+
+        <th>Project</th>
+        <th>Material</th>
+        <th>Size</th>
+        <th>Current Stock</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        """
+
+        total_stock = 0
+        total_materials = 0
+
+        materials = Material.objects.all()
+
+        for material in materials:
+
+            if selected_project:
+
+                project = Project.objects.get(
+                    id=selected_project
+                )
 
                 stock = StockTransaction.get_current_stock(
                     project,
@@ -118,15 +222,96 @@ class ProjectStockSummaryAdmin(admin.ModelAdmin):
 
                 if stock > 0:
 
+                    total_stock += stock
+                    total_materials += 1
+
                     html += f"""
+
                     <tr>
-                        <td>{project.project_name}</td>
-                        <td>{material.material_name}</td>
-                        <td>{material.size}</td>
-                        <td>{stock}</td>
+
+                    <td>{project.project_name}</td>
+                    <td>{material.material_name}</td>
+                    <td>{material.size}</td>
+                    <td>{stock}</td>
+
                     </tr>
+
                     """
 
-        html += "</table>"
+            else:
+
+                stock_data = material.all_project_stock()
+
+                for project_name, stock in stock_data.items():
+
+                    total_stock += stock
+                    total_materials += 1
+
+                    html += f"""
+
+                    <tr>
+
+                    <td>{project_name}</td>
+                    <td>{material.material_name}</td>
+                    <td>{material.size}</td>
+                    <td>{stock}</td>
+
+                    </tr>
+
+                    """
+
+        html += f"""
+
+        </tbody>
+
+        </table>
+
+        </div>
+
+        </div>
+
+        <div class="row mt-4">
+
+        <div class="col-md-6">
+
+        <div class="card shadow-sm">
+
+        <div class="card-body">
+
+        <h5>Total Materials</h5>
+
+        <h2>{total_materials}</h2>
+
+        </div>
+
+        </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+        <div class="card shadow-sm">
+
+        <div class="card-body">
+
+        <h5>Total Inventory Qty</h5>
+
+        <h2>{total_stock}</h2>
+
+        </div>
+
+        </div>
+
+        </div>
+
+        </div>
+
+        </div>
+
+        </body>
+
+        </html>
+
+        """
 
         return HttpResponse(html)
