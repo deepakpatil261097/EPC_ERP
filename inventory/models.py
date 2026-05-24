@@ -21,6 +21,18 @@ class Material(models.Model):
     def current_stock(self, project):
         return StockTransaction.get_current_stock(project, self)
 
+    def all_project_stock(self):
+        projects = Project.objects.all()
+
+        stock_data = {}
+
+        for project in projects:
+            stock = StockTransaction.get_current_stock(project, self)
+
+            stock_data[project.project_name] = stock
+
+        return stock_data
+
 
 class StockTransaction(models.Model):
     TRANSACTION_TYPES = (
@@ -44,11 +56,13 @@ class StockTransaction(models.Model):
         )
 
         total_in = sum(
-            t.quantity for t in transactions if t.transaction_type == 'IN'
+            t.quantity for t in transactions
+            if t.transaction_type == 'IN'
         )
 
         total_out = sum(
-            t.quantity for t in transactions if t.transaction_type == 'OUT'
+            t.quantity for t in transactions
+            if t.transaction_type == 'OUT'
         )
 
         return total_in - total_out
