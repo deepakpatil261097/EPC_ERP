@@ -13,10 +13,11 @@ class Project(models.Model):
 class Material(models.Model):
     material_name = models.CharField(max_length=100)
     material_code = models.CharField(max_length=50)
+    size = models.CharField(max_length=50)
     unit = models.CharField(max_length=20)
 
     def __str__(self):
-        return self.material_name
+        return f"{self.material_name} - {self.size}"
 
     def current_stock(self, project):
         return StockTransaction.get_current_stock(project, self)

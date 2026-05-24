@@ -16,6 +16,7 @@ class MaterialAdmin(admin.ModelAdmin):
     list_display = (
         'material_code',
         'material_name',
+        'size',
         'unit',
         'total_stock',
         'site_wise_stock',
