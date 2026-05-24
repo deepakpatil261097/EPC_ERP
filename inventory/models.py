@@ -30,9 +30,17 @@ class Material(models.Model):
         for project in projects:
             stock = StockTransaction.get_current_stock(project, self)
 
-            stock_data[project.project_name] = stock
+            if stock > 0:
+                stock_data[project.project_name] = stock
 
         return stock_data
+
+
+class ProjectStockSummary(models.Model):
+    class Meta:
+        managed = False
+        verbose_name = "Project Stock Summary"
+        verbose_name_plural = "Project Stock Summary"
 
 
 class StockTransaction(models.Model):

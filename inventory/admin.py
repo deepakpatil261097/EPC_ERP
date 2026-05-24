@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Project, Material, StockTransaction
+from .models import (
+    Project,
+    Material,
+    StockTransaction,
+    ProjectStockSummary
+)
 
 
 @admin.register(Project)
@@ -78,3 +83,28 @@ class StockTransactionAdmin(admin.ModelAdmin):
         )
 
     current_stock.short_description = 'Current Stock'
+
+
+@admin.register(ProjectStockSummary)
+class ProjectStockSummaryAdmin(admin.ModelAdmin):
+    list_display = (
+        'project_name',
+        'material_name',
+        'size',
+        'current_stock',
+    )
+
+    def get_queryset(self, request):
+        return []
+
+    def project_name(self, obj):
+        return ""
+
+    def material_name(self, obj):
+        return ""
+
+    def size(self, obj):
+        return ""
+
+    def current_stock(self, obj):
+        return ""
