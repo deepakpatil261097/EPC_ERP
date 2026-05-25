@@ -1,0 +1,442 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<div class="card shadow-sm p-4 mb-4">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <h3>
+            Add Transaction
+        </h3>
+
+        <a
+            href="/transactions/"
+            class="btn btn-secondary"
+        >
+            Back
+        </a>
+
+    </div>
+
+    <hr>
+
+    {% if error %}
+
+    <div class="alert alert-danger">
+
+        {{ error }}
+
+    </div>
+
+    {% endif %}
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="row g-4">
+
+            <!-- TRANSACTION TYPE -->
+
+            <div class="col-md-2">
+
+                <label class="form-label">
+
+                    Transaction Type
+
+                </label>
+
+                <select
+                    name="transaction_type"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="IN">
+                        IN
+                    </option>
+
+                    <option value="OUT">
+                        OUT
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- PROJECT -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Project
+
+                </label>
+
+                <select
+                    name="project"
+                    class="form-select"
+                    required
+                >
+
+                    {% for project in projects %}
+
+                    <option
+                        value="{{ project.id }}"
+                    >
+
+                        {{ project.project_name }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- MATERIAL CODE -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Material Code
+
+                </label>
+
+                <input
+                    type="text"
+                    id="materialCode"
+                    class="form-control"
+                    placeholder="Insert Material Code"
+                    list="materialCodeList"
+                    autocomplete="off"
+                    required
+                >
+
+                <datalist id="materialCodeList">
+
+                    {% for material in materials %}
+
+                    <option
+                        value="{{ material.material_code }}"
+                    >
+
+                    {% endfor %}
+
+                </datalist>
+
+            </div>
+
+            <!-- MATERIAL -->
+
+            <div class="col-md-2">
+
+                <label class="form-label">
+
+                    Material
+
+                </label>
+
+                <input
+                    type="text"
+                    id="materialName"
+                    class="form-control readonly-box"
+                    readonly
+                >
+
+            </div>
+
+            <!-- SIZE -->
+
+            <div class="col-md-1">
+
+                <label class="form-label">
+
+                    Size
+
+                </label>
+
+                <input
+                    type="text"
+                    id="materialSize"
+                    class="form-control readonly-box"
+                    readonly
+                >
+
+            </div>
+
+            <!-- UNIT -->
+
+            <div class="col-md-1">
+
+                <label class="form-label">
+
+                    Unit
+
+                </label>
+
+                <input
+                    type="text"
+                    id="materialUnit"
+                    class="form-control readonly-box"
+                    readonly
+                >
+
+            </div>
+
+            <!-- HIDDEN MATERIAL ID -->
+
+            <input
+                type="hidden"
+                name="material"
+                id="materialId"
+            >
+
+            <!-- QUANTITY -->
+
+            <div class="col-md-2">
+
+                <label class="form-label">
+
+                    Quantity
+
+                </label>
+
+                <input
+                    type="number"
+                    step="0.01"
+                    name="quantity"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+        <br>
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+
+            Save Transaction
+
+        </button>
+
+    </form>
+
+</div>
+
+<!-- TRANSACTION HISTORY -->
+
+<div class="card shadow-sm p-4">
+
+    <h4 class="mb-3">
+
+        Recent Transactions
+
+    </h4>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>
+                        Project
+                    </th>
+
+                    <th>
+                        Material Code
+                    </th>
+
+                    <th>
+                        Material
+                    </th>
+
+                    <th>
+                        Type
+                    </th>
+
+                    <th>
+                        Qty
+                    </th>
+
+                    <th>
+                        Unit
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for transaction in transactions %}
+
+                <tr>
+
+                    <td>
+                        {{ transaction.project.project_name }}
+                    </td>
+
+                    <td>
+                        {{ transaction.material.material_code }}
+                    </td>
+
+                    <td>
+                        {{ transaction.material.material_name }}
+                    </td>
+
+                    <td>
+
+                        {% if transaction.transaction_type == 'IN' %}
+
+                        <span class="badge-in">
+                            IN
+                        </span>
+
+                        {% else %}
+
+                        <span class="badge-out">
+                            OUT
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ transaction.quantity }}
+                    </td>
+
+                    <td>
+                        {{ transaction.material.unit }}
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="text-center text-muted"
+                    >
+
+                        No Transactions Found
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+const materials = [
+
+    {% for material in materials %}
+
+    {
+
+        id: "{{ material.id }}",
+
+        code: "{{ material.material_code|escapejs }}",
+
+        name: "{{ material.material_name|escapejs }}",
+
+        size: "{{ material.size|escapejs }}",
+
+        unit: "{{ material.unit|escapejs }}"
+
+    },
+
+    {% endfor %}
+
+];
+
+document.getElementById(
+    "materialCode"
+).addEventListener(
+
+    "input",
+
+    function () {
+
+        let enteredCode =
+            this.value.trim();
+
+        let foundMaterial =
+            materials.find(
+
+                m =>
+                m.code === enteredCode
+
+            );
+
+        if (foundMaterial) {
+
+            document.getElementById(
+                "materialName"
+            ).value = foundMaterial.name;
+
+            document.getElementById(
+                "materialSize"
+            ).value = foundMaterial.size;
+
+            document.getElementById(
+                "materialUnit"
+            ).value = foundMaterial.unit;
+
+            document.getElementById(
+                "materialId"
+            ).value = foundMaterial.id;
+
+        }
+
+        else {
+
+            document.getElementById(
+                "materialName"
+            ).value = "";
+
+            document.getElementById(
+                "materialSize"
+            ).value = "";
+
+            document.getElementById(
+                "materialUnit"
+            ).value = "";
+
+            document.getElementById(
+                "materialId"
+            ).value = "";
+
+        }
+
+    }
+
+);
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,226 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<div class="card shadow-sm p-4 mb-4">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <h3>
+            Transactions
+        </h3>
+
+        <a
+            href="/add-transaction/"
+            class="btn btn-primary"
+        >
+            + Add Transaction
+        </a>
+
+    </div>
+
+    <hr>
+
+    <div class="row">
+
+        <div class="col-md-5">
+
+            <input
+                type="text"
+                id="transactionSearch"
+                class="form-control"
+                placeholder="Search Project / Material Code / Material"
+                onkeyup="searchTransaction()"
+                style="text-align:left;"
+            >
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card shadow-sm p-4">
+
+    <div class="table-responsive">
+
+        <table
+            class="table table-hover align-middle"
+            id="transactionTable"
+        >
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>
+                        Project
+                    </th>
+
+                    <th>
+                        Material Code
+                    </th>
+
+                    <th>
+                        Material
+                    </th>
+
+                    <th>
+                        Size
+                    </th>
+
+                    <th>
+                        Type
+                    </th>
+
+                    <th>
+                        Quantity
+                    </th>
+
+                    <th>
+                        Unit
+                    </th>
+
+                    <th>
+                        Current Stock
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for transaction in transactions %}
+
+                <tr>
+
+                    <td>
+                        {{ transaction.project.project_name }}
+                    </td>
+
+                    <td>
+                        {{ transaction.material.material_code }}
+                    </td>
+
+                    <td>
+                        {{ transaction.material.material_name }}
+                    </td>
+
+                    <td>
+                        {{ transaction.material.size }}
+                    </td>
+
+                    <td>
+
+                        {% if transaction.transaction_type == 'IN' %}
+
+                        <span class="badge-in">
+                            IN
+                        </span>
+
+                        {% else %}
+
+                        <span class="badge-out">
+                            OUT
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+                        {{ transaction.quantity }}
+                    </td>
+
+                    <td>
+                        {{ transaction.material.unit }}
+                    </td>
+
+                    <td>
+
+                        <span class="fw-bold text-primary">
+
+                            {{ transaction.current_stock }}
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="8"
+                        class="text-center text-muted"
+                    >
+
+                        No Transactions Found
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+function searchTransaction() {
+
+    let input = document.getElementById(
+        "transactionSearch"
+    ).value.toLowerCase().trim();
+
+    let table = document.getElementById(
+        "transactionTable"
+    );
+
+    let tr = table.getElementsByTagName(
+        "tr"
+    );
+
+    for (let i = 1; i < tr.length; i++) {
+
+        let td = tr[i].getElementsByTagName(
+            "td"
+        );
+
+        let found = false;
+
+        for (let j = 0; j < td.length; j++) {
+
+            if (
+                td[j]
+                &&
+                td[j].innerHTML
+                .toLowerCase()
+                .includes(input)
+            ) {
+
+                found = true;
+
+            }
+
+        }
+
+        tr[i].style.display =
+            found ? "" : "none";
+
+    }
+
+}
+
+</script>
+
+{% endblock %}

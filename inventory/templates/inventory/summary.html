@@ -1,0 +1,218 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<div class="card shadow-sm p-4 mb-4">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <h3>
+            Stock Summary
+        </h3>
+
+        <div>
+
+            <span class="badge bg-primary">
+
+                Total Materials :
+                {{ total_materials }}
+
+            </span>
+
+            <span class="badge bg-success ms-2">
+
+                Total Qty :
+                {{ total_inventory_qty }}
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <form method="GET">
+
+        <div class="row g-3">
+
+            <!-- PROJECT FILTER -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+
+                    Project
+
+                </label>
+
+                <select
+                    name="project"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Projects
+                    </option>
+
+                    {% for project in projects %}
+
+                    <option
+                        value="{{ project.id }}"
+                        {% if selected_project == project.id|stringformat:"s" %}
+                        selected
+                        {% endif %}
+                    >
+
+                        {{ project.project_name }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- MATERIAL SEARCH -->
+
+            <div class="col-md-5">
+
+                <label class="form-label">
+
+                    Search Material
+
+                </label>
+
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control"
+                    placeholder="Search Material Code or Material Name"
+                    value="{% if search %}{{ search }}{% endif %}"
+                    style="text-align:left;"
+                >
+
+            </div>
+
+            <!-- BUTTON -->
+
+            <div class="col-md-3 d-flex align-items-end">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary w-100"
+                >
+                    Search
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+<div class="card shadow-sm p-4">
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>
+                        Project
+                    </th>
+
+                    <th>
+                        Material Code
+                    </th>
+
+                    <th>
+                        Material
+                    </th>
+
+                    <th>
+                        Size
+                    </th>
+
+                    <th>
+                        Current Stock
+                    </th>
+
+                    <th>
+                        Unit
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in summary_data %}
+
+                <tr>
+
+                    <td>
+                        {{ item.project }}
+                    </td>
+
+                    <td>
+                        {{ item.material_code }}
+                    </td>
+
+                    <td>
+                        {{ item.material }}
+                    </td>
+
+                    <td>
+                        {{ item.size }}
+                    </td>
+
+                    <td>
+
+                        <span class="fw-bold text-primary">
+
+                            {{ item.stock }}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+                        {{ item.unit }}
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="text-center text-muted"
+                    >
+
+                        No stock data found
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}
