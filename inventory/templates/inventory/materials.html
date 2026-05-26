@@ -62,6 +62,10 @@
                     </th>
 
                     <th>
+                        Category
+                    </th>
+
+                    <th>
                         Size
                     </th>
 
@@ -70,7 +74,15 @@
                     </th>
 
                     <th>
+                        Min Stock
+                    </th>
+
+                    <th>
                         Total Stock
+                    </th>
+
+                    <th>
+                        Status
                     </th>
 
                 </tr>
@@ -81,7 +93,15 @@
 
                 {% for material in materials %}
 
-                <tr>
+                <tr
+
+                    {% if material.total_stock <= material.min_stock %}
+
+                    class="table-danger"
+
+                    {% endif %}
+
+                >
 
                     <td>
                         {{ material.material_code }}
@@ -89,6 +109,16 @@
 
                     <td>
                         {{ material.material_name }}
+                    </td>
+
+                    <td>
+
+                        <span class="badge bg-info">
+
+                            {{ material.category }}
+
+                        </span>
+
                     </td>
 
                     <td>
@@ -101,11 +131,39 @@
 
                     <td>
 
+                        {{ material.min_stock }}
+
+                    </td>
+
+                    <td>
+
                         <span class="fw-bold text-primary">
 
                             {{ material.total_stock }}
 
                         </span>
+
+                    </td>
+
+                    <td>
+
+                        {% if material.total_stock <= material.min_stock %}
+
+                        <span class="badge bg-danger">
+
+                            LOW STOCK
+
+                        </span>
+
+                        {% else %}
+
+                        <span class="badge bg-success">
+
+                            OK
+
+                        </span>
+
+                        {% endif %}
 
                     </td>
 
@@ -116,7 +174,7 @@
                 <tr>
 
                     <td
-                        colspan="5"
+                        colspan="8"
                         class="text-center text-muted"
                     >
 

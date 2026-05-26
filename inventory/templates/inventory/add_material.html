@@ -25,7 +25,9 @@
 
         <div class="row g-4">
 
-            <div class="col-md-3">
+            <!-- MATERIAL CODE -->
+
+            <div class="col-md-2">
 
                 <label class="form-label">
 
@@ -41,6 +43,8 @@
                 >
 
             </div>
+
+            <!-- MATERIAL NAME -->
 
             <div class="col-md-3">
 
@@ -59,6 +63,52 @@
 
             </div>
 
+            <!-- CATEGORY -->
+
+            <div class="col-md-2">
+
+                <label class="form-label">
+
+                    Category
+
+                </label>
+
+                <select
+                    name="category"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="Pipe">
+                        Pipe
+                    </option>
+
+                    <option value="Valve">
+                        Valve
+                    </option>
+
+                    <option value="Fitting">
+                        Fitting
+                    </option>
+
+                    <option value="Instrument">
+                        Instrument
+                    </option>
+
+                    <option value="Electrical">
+                        Electrical
+                    </option>
+
+                    <option value="Consumable">
+                        Consumable
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- SIZE -->
+
             <div class="col-md-2">
 
                 <label class="form-label">
@@ -76,7 +126,9 @@
 
             </div>
 
-            <div class="col-md-2">
+            <!-- UNIT -->
+
+            <div class="col-md-1">
 
                 <label class="form-label">
 
@@ -87,6 +139,26 @@
                 <input
                     type="text"
                     name="unit"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <!-- MIN STOCK -->
+
+            <div class="col-md-2">
+
+                <label class="form-label">
+
+                    Min Stock
+
+                </label>
+
+                <input
+                    type="number"
+                    step="0.01"
+                    name="min_stock"
                     class="form-control"
                     required
                 >
@@ -107,103 +179,6 @@
         </button>
 
     </form>
-
-</div>
-
-<br>
-
-<div class="card shadow-sm p-4">
-
-    <h4 class="mb-3">
-
-        Existing Materials
-
-    </h4>
-
-    <div class="table-responsive">
-
-        <table class="table table-hover align-middle">
-
-            <thead class="table-dark">
-
-                <tr>
-
-                    <th>
-                        Material Code
-                    </th>
-
-                    <th>
-                        Material
-                    </th>
-
-                    <th>
-                        Size
-                    </th>
-
-                    <th>
-                        Unit
-                    </th>
-
-                    <th>
-                        Total Stock
-                    </th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                {% for material in materials %}
-
-                <tr>
-
-                    <td>
-                        {{ material.material_code }}
-                    </td>
-
-                    <td>
-                        {{ material.material_name }}
-                    </td>
-
-                    <td>
-                        {{ material.size }}
-                    </td>
-
-                    <td>
-                        {{ material.unit }}
-                    </td>
-
-                    <td>
-
-                        {{ material.total_stock }}
-
-                    </td>
-
-                </tr>
-
-                {% empty %}
-
-                <tr>
-
-                    <td
-                        colspan="5"
-                        class="text-center text-muted"
-                    >
-
-                        No Materials Found
-
-                    </td>
-
-                </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-        </table>
-
-    </div>
 
 </div>
 

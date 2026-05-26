@@ -126,6 +126,10 @@ def add_material(request):
             'material_name'
         )
 
+        category = request.POST.get(
+            'category'
+        )
+
         size = request.POST.get(
             'size'
         )
@@ -134,12 +138,23 @@ def add_material(request):
             'unit'
         )
 
+        min_stock = request.POST.get(
+            'min_stock'
+        )
+
         Material.objects.create(
 
             material_code=material_code,
+
             material_name=material_name,
+
+            category=category,
+
             size=size,
-            unit=unit
+
+            unit=unit,
+
+            min_stock=min_stock
 
         )
 
@@ -441,6 +456,9 @@ def summary_page(request):
                     'material':
                     material.material_name,
 
+                    'category':
+                    material.category,
+
                     'size':
                     material.size,
 
@@ -488,6 +506,9 @@ def summary_page(request):
 
                     'material':
                     material.material_name,
+
+                    'category':
+                    material.category,
 
                     'size':
                     material.size,
