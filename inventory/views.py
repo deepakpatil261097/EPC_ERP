@@ -1,3 +1,5 @@
+import pandas as pd
+
 from django.shortcuts import (
     render,
     redirect
@@ -8,9 +10,14 @@ from django.contrib.auth import (
     login
 )
 
+from django.http import (
+    HttpResponse
+)
+
 from .models import (
     Project,
     Material,
+    MaterialTransfer,
     StockTransaction
 )
 
@@ -67,10 +74,137 @@ def home(request):
     if not request.user.is_authenticated:
         return redirect('/')
 
+    total_projects = (
+        Project.objects.count()
+    )
+
+    total_materials = (
+        Material.objects.count()
+    )
+
+    total_transactions = (
+        StockTransaction.objects.count()
+    )
+
+    total_in = (
+        StockTransaction.objects.filter(
+            transaction_type='IN'
+        ).count()
+    )
+
+    total_out = (
+        StockTransaction.objects.filter(
+            transaction_type='OUT'
+        ).count()
+    )
+
+    low_stock_count = 0
+
+    materials = Material.objects.all()
+
+    for material in materials:
+
+        stock_data = (
+            material.all_project_stock()
+        )
+
+        total_stock = sum(
+            stock_data.values()
+        )
+
+        if total_stock <= material.min_stock:
+
+            low_stock_count += 1
+
+    context = {
+
+        'total_projects':
+        total_projects,
+
+        'total_materials':
+        total_materials,
+
+        'total_transactions':
+        total_transactions,
+
+        'low_stock_count':
+        low_stock_count,
+
+        'total_in':
+        total_in,
+
+        'total_out':
+        total_out,
+
+    }
+
     return render(
 
         request,
-        'inventory/home.html'
+        'inventory/home.html',
+        context
+
+    )
+
+
+# INVENTORY DASHBOARD
+
+def inventory_dashboard(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/')
+
+    total_materials = (
+        Material.objects.count()
+    )
+
+    total_transactions = (
+        StockTransaction.objects.count()
+    )
+
+    total_transfers = (
+        MaterialTransfer.objects.count()
+    )
+
+    low_stock_count = 0
+
+    materials = Material.objects.all()
+
+    for material in materials:
+
+        stock_data = (
+            material.all_project_stock()
+        )
+
+        total_stock = sum(
+            stock_data.values()
+        )
+
+        if total_stock <= material.min_stock:
+
+            low_stock_count += 1
+
+    context = {
+
+        'total_materials':
+        total_materials,
+
+        'total_transactions':
+        total_transactions,
+
+        'total_transfers':
+        total_transfers,
+
+        'low_stock_count':
+        low_stock_count,
+
+    }
+
+    return render(
+
+        request,
+        'inventory/inventory_dashboard.html',
+        context
 
     )
 
@@ -107,6 +241,77 @@ def materials_page(request):
         context
 
     )
+
+
+# EXPORT MATERIALS EXCEL
+
+def export_materials_excel(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/')
+
+    materials = Material.objects.all()
+
+    data = []
+
+    for material in materials:
+
+        stock_data = (
+            material.all_project_stock()
+        )
+
+        total_stock = sum(
+            stock_data.values()
+        )
+
+        data.append({
+
+            'Material Code':
+            material.material_code,
+
+            'Material Name':
+            material.material_name,
+
+            'Category':
+            material.category,
+
+            'Size':
+            material.size,
+
+            'Unit':
+            material.unit,
+
+            'Min Stock':
+            material.min_stock,
+
+            'Total Stock':
+            total_stock,
+
+        })
+
+    df = pd.DataFrame(data)
+
+    response = HttpResponse(
+
+        content_type=
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+    )
+
+    response[
+        'Content-Disposition'
+    ] = (
+        'attachment; filename=materials.xlsx'
+    )
+
+    df.to_excel(
+
+        response,
+        index=False
+
+    )
+
+    return response
 
 
 # ADD MATERIAL
@@ -182,6 +387,185 @@ def add_material(request):
 
         request,
         'inventory/add_material.html',
+        context
+
+    )
+
+
+# UPLOAD MATERIALS EXCEL
+
+def upload_materials(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/')
+
+    if request.method == "POST":
+
+        excel_file = request.FILES[
+            'excel_file'
+        ]
+
+        df = pd.read_excel(
+            excel_file
+        )
+
+        for index, row in df.iterrows():
+
+            Material.objects.create(
+
+                material_code=row[
+                    'material_code'
+                ],
+
+                material_name=row[
+                    'material_name'
+                ],
+
+                category=row[
+                    'category'
+                ],
+
+                size=row[
+                    'size'
+                ],
+
+                unit=row[
+                    'unit'
+                ],
+
+                min_stock=row[
+                    'min_stock'
+                ]
+
+            )
+
+        return redirect(
+            '/materials/'
+        )
+
+    return render(
+
+        request,
+        'inventory/upload_materials.html'
+
+    )
+
+
+# MATERIAL TRANSFER
+
+def transfer_material(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/')
+
+    error = ""
+
+    projects = Project.objects.all()
+
+    materials = Material.objects.all()
+
+    if request.method == "POST":
+
+        from_project_id = request.POST.get(
+            'from_project'
+        )
+
+        to_project_id = request.POST.get(
+            'to_project'
+        )
+
+        material_id = request.POST.get(
+            'material'
+        )
+
+        quantity = float(
+            request.POST.get(
+                'quantity'
+            )
+        )
+
+        from_project = Project.objects.get(
+            id=from_project_id
+        )
+
+        to_project = Project.objects.get(
+            id=to_project_id
+        )
+
+        material = Material.objects.get(
+            id=material_id
+        )
+
+        current_stock = (
+            StockTransaction.get_current_stock(
+                from_project,
+                material
+            )
+        )
+
+        if quantity > current_stock:
+
+            error = (
+                f"Available Stock is "
+                f"{current_stock}"
+            )
+
+        else:
+
+            StockTransaction.objects.create(
+
+                project=from_project,
+
+                material=material,
+
+                transaction_type='OUT',
+
+                quantity=quantity
+
+            )
+
+            StockTransaction.objects.create(
+
+                project=to_project,
+
+                material=material,
+
+                transaction_type='IN',
+
+                quantity=quantity
+
+            )
+
+            MaterialTransfer.objects.create(
+
+                from_project=from_project,
+
+                to_project=to_project,
+
+                material=material,
+
+                quantity=quantity
+
+            )
+
+            return redirect(
+                '/summary/'
+            )
+
+    context = {
+
+        'projects': projects,
+
+        'materials': materials,
+
+        'error': error,
+
+    }
+
+    return render(
+
+        request,
+        'inventory/transfer_material.html',
         context
 
     )

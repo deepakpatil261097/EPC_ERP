@@ -1,139 +1,259 @@
 {% extends 'inventory/base.html' %}
 
-{% load static %}
-
 {% block content %}
 
-<div class="card shadow-sm p-5 mb-4 text-center">
+<!-- DASHBOARD HEADER -->
 
-    <img
-        src="{% static 'images/logo.png' %}"
-        width="140"
-        class="mb-4"
-    >
+<div class="mb-4">
 
-    <h1 class="mb-3">
+    <h2>
 
-        Herrscher Technologies
+        Dashboard
 
-    </h1>
-
-    <h5 class="text-muted mb-4">
-
-        Conquering Horizon
-
-    </h5>
+    </h2>
 
     <p class="text-muted">
 
-        Professional EPC ERP &
-        Inventory Management System
+        Welcome to EPC ERP System
 
     </p>
 
 </div>
 
+<!-- DASHBOARD CARDS -->
+
 <div class="row g-4">
 
+    <!-- TOTAL PROJECTS -->
+
     <div class="col-md-3">
 
-        <div class="card shadow-sm p-4 text-center">
+        <div class="erp-card">
 
-            <h5>
-                Materials
-            </h5>
+            <div class="card-title-small">
 
-            <p class="text-muted mt-3">
+                Total Projects
 
-                Material Master
-                Management
+            </div>
 
-            </p>
+            <div class="card-value">
 
-            <a
-                href="/materials/"
-                class="btn btn-primary"
-            >
-                Open
-            </a>
+                {{ total_projects }}
+
+            </div>
 
         </div>
 
     </div>
 
+    <!-- TOTAL MATERIALS -->
+
     <div class="col-md-3">
 
-        <div class="card shadow-sm p-4 text-center">
+        <div class="erp-card">
 
-            <h5>
+            <div class="card-title-small">
+
+                Total Materials
+
+            </div>
+
+            <div class="card-value">
+
+                {{ total_materials }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- LOW STOCK -->
+
+    <div class="col-md-3">
+
+        <div class="erp-card">
+
+            <div class="card-title-small">
+
+                Low Stock Items
+
+            </div>
+
+            <div class="card-value text-danger">
+
+                {{ low_stock_count }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TRANSACTIONS -->
+
+    <div class="col-md-3">
+
+        <div class="erp-card">
+
+            <div class="card-title-small">
+
                 Transactions
-            </h5>
 
-            <p class="text-muted mt-3">
+            </div>
 
-                IN / OUT Material
-                Tracking
+            <div class="card-value">
 
-            </p>
+                {{ total_transactions }}
 
-            <a
-                href="/transactions/"
-                class="btn btn-primary"
-            >
-                Open
-            </a>
+            </div>
 
         </div>
 
     </div>
 
-    <div class="col-md-3">
+</div>
 
-        <div class="card shadow-sm p-4 text-center">
+<!-- SECOND SECTION -->
 
-            <h5>
-                Projects
+<div class="row mt-4">
+
+    <!-- RECENT ACTIVITY -->
+
+    <div class="col-md-8">
+
+        <div class="erp-card">
+
+            <h5 class="mb-3">
+
+                Recent Activities
+
             </h5>
 
-            <p class="text-muted mt-3">
+            <table class="table">
 
-                Project Wise
-                Stock Tracking
+                <thead>
 
-            </p>
+                    <tr>
 
-            <a
-                href="/projects/"
-                class="btn btn-primary"
-            >
-                Open
-            </a>
+                        <th>
+
+                            Activity
+
+                        </th>
+
+                        <th>
+
+                            Status
+
+                        </th>
+
+                        <th>
+
+                            Date
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+
+                            Material Transfer
+
+                        </td>
+
+                        <td>
+
+                            Completed
+
+                        </td>
+
+                        <td>
+
+                            Today
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>
+
+                            Excel Upload
+
+                        </td>
+
+                        <td>
+
+                            Completed
+
+                        </td>
+
+                        <td>
+
+                            Today
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
 
         </div>
 
     </div>
 
-    <div class="col-md-3">
+    <!-- QUICK ACTIONS -->
 
-        <div class="card shadow-sm p-4 text-center">
+    <div class="col-md-4">
 
-            <h5>
-                Summary
+        <div class="erp-card">
+
+            <h5 class="mb-3">
+
+                Quick Actions
+
             </h5>
 
-            <p class="text-muted mt-3">
+            <div class="d-grid gap-3">
 
-                Live Stock
-                Summary
+                <a
+                    href="/add-material/"
+                    class="btn btn-primary"
+                >
 
-            </p>
+                    Add Material
 
-            <a
-                href="/summary/"
-                class="btn btn-primary"
-            >
-                Open
-            </a>
+                </a>
+
+                <a
+                    href="/add-transaction/"
+                    class="btn btn-primary"
+                >
+
+                    Add Transaction
+
+                </a>
+
+                <a
+                    href="/transfer-material/"
+                    class="btn btn-primary"
+                >
+
+                    Transfer Material
+
+                </a>
+
+            </div>
 
         </div>
 

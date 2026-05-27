@@ -111,6 +111,52 @@ class Material(models.Model):
         return stock_data
 
 
+# MATERIAL TRANSFER MODEL
+
+class MaterialTransfer(models.Model):
+
+    from_project = models.ForeignKey(
+
+        Project,
+
+        on_delete=models.CASCADE,
+
+        related_name='from_project'
+
+    )
+
+    to_project = models.ForeignKey(
+
+        Project,
+
+        on_delete=models.CASCADE,
+
+        related_name='to_project'
+
+    )
+
+    material = models.ForeignKey(
+
+        Material,
+
+        on_delete=models.CASCADE
+
+    )
+
+    quantity = models.FloatField()
+
+    transfer_date = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+
+        return (
+            f"{self.material}"
+            f" Transfer"
+        )
+
+
 # PROJECT STOCK SUMMARY
 
 class ProjectStockSummary(models.Model):

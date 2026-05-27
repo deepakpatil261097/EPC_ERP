@@ -1,62 +1,110 @@
 from django.urls import path
 
-from . import views
+from .views import (
 
+    login_page,
+    home,
+
+    inventory_dashboard,
+
+    materials_page,
+    add_material,
+    upload_materials,
+    export_materials_excel,
+
+    transactions_page,
+    add_transaction,
+
+    transfer_material,
+
+    summary_page,
+
+    projects_page,
+    add_project,
+
+)
 
 urlpatterns = [
 
+    # LOGIN
+
     path(
         '',
-        views.login_page,
-        name='login'
+        login_page
     ),
+
+    # HOME
 
     path(
         'home/',
-        views.home,
-        name='home'
+        home
     ),
+
+    # INVENTORY DASHBOARD
+
+    path(
+        'inventory-dashboard/',
+        inventory_dashboard
+    ),
+
+    # MATERIALS
 
     path(
         'materials/',
-        views.materials_page,
-        name='materials'
+        materials_page
     ),
 
     path(
         'add-material/',
-        views.add_material,
-        name='add_material'
+        add_material
     ),
 
     path(
+        'upload-materials/',
+        upload_materials
+    ),
+
+    path(
+        'export-materials-excel/',
+        export_materials_excel
+    ),
+
+    # TRANSACTIONS
+
+    path(
         'transactions/',
-        views.transactions_page,
-        name='transactions'
+        transactions_page
     ),
 
     path(
         'add-transaction/',
-        views.add_transaction,
-        name='add_transaction'
+        add_transaction
     ),
+
+    # TRANSFER
+
+    path(
+        'transfer-material/',
+        transfer_material
+    ),
+
+    # SUMMARY
+
+    path(
+        'summary/',
+        summary_page
+    ),
+
+    # PROJECTS
 
     path(
         'projects/',
-        views.projects_page,
-        name='projects'
+        projects_page
     ),
 
     path(
         'add-project/',
-        views.add_project,
-        name='add_project'
-    ),
-
-    path(
-        'summary/',
-        views.summary_page,
-        name='summary'
+        add_project
     ),
 
 ]
