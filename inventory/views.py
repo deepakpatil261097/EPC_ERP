@@ -637,7 +637,7 @@ def add_transaction(request):
             'project'
         )
 
-        material_id = request.POST.get(
+        material_code = request.POST.get(
             'material'
         )
 
@@ -647,12 +647,16 @@ def add_transaction(request):
             )
         )
 
+        remarks = request.POST.get(
+            'remarks'
+        )
+
         project = Project.objects.get(
             id=project_id
         )
 
         material = Material.objects.get(
-            id=material_id
+            material_code=material_code
         )
 
         current_stock = (
@@ -678,9 +682,18 @@ def add_transaction(request):
             StockTransaction.objects.create(
 
                 project=project,
+
                 material=material,
+
                 transaction_type=transaction_type,
-                quantity=quantity
+
+                quantity=quantity,
+
+                created_by=request.user.username,
+
+                remarks=remarks,
+
+                status='Pending'
 
             )
 
@@ -691,8 +704,11 @@ def add_transaction(request):
     context = {
 
         'projects': projects,
+
         'materials': materials,
+
         'transactions': transactions,
+
         'error': error,
 
     }

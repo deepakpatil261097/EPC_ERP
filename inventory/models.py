@@ -6,86 +6,107 @@ from django.db import models
 class Project(models.Model):
 
     project_code = models.CharField(
-        max_length=50
+        max_length=100
     )
 
     project_name = models.CharField(
-        max_length=100
+        max_length=255
     )
 
     location = models.CharField(
-        max_length=100
+        max_length=255
+    )
+
+    created_date = models.DateTimeField(
+        auto_now_add=True
     )
 
     def __str__(self):
 
-        return self.project_name
+        return self.project_code
 
 
 # MATERIAL MODEL
 
 class Material(models.Model):
 
-    CATEGORY_CHOICES = (
+    STATUS_CHOICES = [
 
-        ('Pipe', 'Pipe'),
+        ('Active', 'Active'),
 
-        ('Valve', 'Valve'),
+        ('Inactive', 'Inactive')
 
-        ('Fitting', 'Fitting'),
+    ]
 
-        ('Instrument', 'Instrument'),
-
-        ('Electrical', 'Electrical'),
-
-        ('Consumable', 'Consumable'),
-
-    )
-
-    material_name = models.CharField(
+    material_code = models.CharField(
         max_length=100
     )
 
-    material_code = models.CharField(
-        max_length=50
+    material_name = models.CharField(
+        max_length=255
     )
 
     category = models.CharField(
-
-        max_length=50,
-
-        choices=CATEGORY_CHOICES,
-
-        default='Pipe'
-
+        max_length=100
     )
 
     size = models.CharField(
-        max_length=50
+        max_length=255,
+        blank=True,
+        null=True
     )
 
     unit = models.CharField(
-        max_length=20
+        max_length=50
     )
 
     min_stock = models.FloatField(
         default=0
     )
 
+    created_date = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_date = models.DateTimeField(
+        auto_now=True
+    )
+
+    created_by = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    status = models.CharField(
+
+        max_length=20,
+
+        choices=STATUS_CHOICES,
+
+        default='Active'
+
+    )
+
+    remarks = models.TextField(
+
+        blank=True,
+
+        null=True
+
+    )
+
     def __str__(self):
 
         return (
-            f"{self.material_name}"
+
+            f"{self.material_code}"
             f" - "
-            f"{self.size}"
+            f"{self.material_name}"
+
         )
 
-    def current_stock(self, project):
-
-        return StockTransaction.get_current_stock(
-            project,
-            self
-        )
+    # ALL PROJECT STOCK
 
     def all_project_stock(self):
 
@@ -105,10 +126,201 @@ class Material(models.Model):
             if stock > 0:
 
                 stock_data[
-                    project.project_name
+                    project.project_code
                 ] = stock
 
         return stock_data
+
+
+# STOCK TRANSACTION MODEL
+
+class StockTransaction(models.Model):
+
+    TRANSACTION_TYPES = [
+
+        ('IN', 'IN'),
+
+        ('OUT', 'OUT')
+
+    ]
+
+    STATUS_CHOICES = [
+
+        ('Draft', 'Draft'),
+
+        ('Pending', 'Pending'),
+
+        ('Approved', 'Approved'),
+
+        ('Rejected', 'Rejected')
+
+    ]
+
+    project = models.ForeignKey(
+
+        Project,
+
+        on_delete=models.CASCADE
+
+    )
+
+    material = models.ForeignKey(
+
+        Material,
+
+        on_delete=models.CASCADE
+
+    )
+
+    transaction_type = models.CharField(
+
+        max_length=10,
+
+        choices=TRANSACTION_TYPES
+
+    )
+
+    quantity = models.FloatField()
+
+    transaction_no = models.CharField(
+
+        max_length=50,
+
+        unique=True,
+
+        blank=True,
+
+        null=True
+
+    )
+
+    transaction_date = models.DateTimeField(
+
+        auto_now_add=True
+
+    )
+
+    status = models.CharField(
+
+        max_length=20,
+
+        choices=STATUS_CHOICES,
+
+        default='Pending'
+
+    )
+
+    created_by = models.CharField(
+
+        max_length=100,
+
+        blank=True,
+
+        null=True
+
+    )
+
+    approved_by = models.CharField(
+
+        max_length=100,
+
+        blank=True,
+
+        null=True
+
+    )
+
+    remarks = models.TextField(
+
+        blank=True,
+
+        null=True
+
+    )
+
+    def save(self, *args, **kwargs):
+
+        if not self.transaction_no:
+
+            last_id = (
+
+                StockTransaction.objects.count()
+                + 1
+
+            )
+
+            self.transaction_no = (
+
+                f"TRN-{last_id:05d}"
+
+            )
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+
+        return (
+
+            f"{self.transaction_no} | "
+            f"{self.transaction_type} | "
+            f"{self.material.material_code}"
+
+        )
+
+    @staticmethod
+
+    def get_current_stock(
+
+        project,
+        material
+
+    ):
+
+        total_in = (
+
+            StockTransaction.objects.filter(
+
+                project=project,
+
+                material=material,
+
+                transaction_type='IN',
+
+                status='Approved'
+
+            ).aggregate(
+
+                models.Sum('quantity')
+
+            )['quantity__sum']
+
+            or 0
+
+        )
+
+        total_out = (
+
+            StockTransaction.objects.filter(
+
+                project=project,
+
+                material=material,
+
+                transaction_type='OUT',
+
+                status='Approved'
+
+            ).aggregate(
+
+                models.Sum('quantity')
+
+            )['quantity__sum']
+
+            or 0
+
+        )
+
+        return total_in - total_out
 
 
 # MATERIAL TRANSFER MODEL
@@ -146,113 +358,60 @@ class MaterialTransfer(models.Model):
     quantity = models.FloatField()
 
     transfer_date = models.DateTimeField(
+
         auto_now_add=True
-    )
-
-    def __str__(self):
-
-        return (
-            f"{self.material}"
-            f" Transfer"
-        )
-
-
-# PROJECT STOCK SUMMARY
-
-class ProjectStockSummary(models.Model):
-
-    class Meta:
-
-        managed = False
-
-        verbose_name = (
-            "Project Stock Summary"
-        )
-
-        verbose_name_plural = (
-            "Project Stock Summary"
-        )
-
-
-# STOCK TRANSACTION
-
-class StockTransaction(models.Model):
-
-    TRANSACTION_TYPES = (
-
-        ('IN', 'IN'),
-
-        ('OUT', 'OUT'),
 
     )
 
-    project = models.ForeignKey(
+    transfer_no = models.CharField(
 
-        Project,
+        max_length=50,
 
-        on_delete=models.CASCADE
+        unique=True,
 
-    )
+        blank=True,
 
-    material = models.ForeignKey(
-
-        Material,
-
-        on_delete=models.CASCADE
+        null=True
 
     )
 
-    transaction_type = models.CharField(
+    approved_by = models.CharField(
 
-        max_length=10,
+        max_length=100,
 
-        choices=TRANSACTION_TYPES
+        blank=True,
+
+        null=True
 
     )
 
-    quantity = models.FloatField()
+    remarks = models.TextField(
 
-    def __str__(self):
+        blank=True,
 
-        return (
-            f"{self.project}"
-            f" - "
-            f"{self.material}"
-        )
+        null=True
 
-    @staticmethod
-    def get_current_stock(
+    )
 
-        project,
-        material
+    def save(self, *args, **kwargs):
 
-    ):
+        if not self.transfer_no:
 
-        transactions = (
-            StockTransaction.objects.filter(
+            last_id = (
 
-                project=project,
-                material=material
+                MaterialTransfer.objects.count()
+                + 1
 
             )
-        )
 
-        total_in = sum(
+            self.transfer_no = (
 
-            t.quantity
-            for t in transactions
+                f"TRF-{last_id:05d}"
 
-            if t.transaction_type == 'IN'
+            )
 
-        )
+        super().save(*args, **kwargs)
 
-        total_out = sum(
+    def __str__(self):
 
-            t.quantity
-            for t in transactions
-
-            if t.transaction_type == 'OUT'
-
-        )
-
-        return total_in - total_out
+        return self.transfer_no

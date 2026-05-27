@@ -1,317 +1,171 @@
 from django.contrib import admin
-from django.http import HttpResponse
 
 from .models import (
+
     Project,
+
     Material,
+
     StockTransaction,
-    ProjectStockSummary
+
+    MaterialTransfer
+
 )
 
 
+# PROJECT ADMIN
+
 @admin.register(Project)
+
 class ProjectAdmin(admin.ModelAdmin):
+
     list_display = (
+
         'project_code',
+
         'project_name',
+
         'location',
-    )
 
+        'created_date'
 
-@admin.register(Material)
-class MaterialAdmin(admin.ModelAdmin):
-    list_display = (
-        'material_code',
-        'material_name',
-        'size',
-        'unit',
-        'total_stock',
-        'site_wise_stock',
     )
 
     search_fields = (
-        'material_name',
-        'material_code',
-        'size',
+
+        'project_code',
+
+        'project_name'
+
     )
 
-    def total_stock(self, obj):
 
-        transactions = StockTransaction.objects.filter(
-            material=obj
-        )
+# MATERIAL ADMIN
 
-        total_in = sum(
-            t.quantity for t in transactions
-            if t.transaction_type == 'IN'
-        )
+@admin.register(Material)
 
-        total_out = sum(
-            t.quantity for t in transactions
-            if t.transaction_type == 'OUT'
-        )
-
-        return total_in - total_out
-
-    total_stock.short_description = 'Total Stock'
-
-    def site_wise_stock(self, obj):
-
-        stock_data = obj.all_project_stock()
-
-        return ", ".join(
-            f"{project}: {qty}"
-            for project, qty in stock_data.items()
-        )
-
-    site_wise_stock.short_description = 'Site-wise Stock'
-
-
-@admin.register(StockTransaction)
-class StockTransactionAdmin(admin.ModelAdmin):
+class MaterialAdmin(admin.ModelAdmin):
 
     list_display = (
-        'project',
-        'material',
-        'transaction_type',
-        'quantity',
-        'current_stock',
+
+        'material_code',
+
+        'material_name',
+
+        'category',
+
+        'size',
+
+        'unit',
+
+        'min_stock',
+
+        'status'
+
+    )
+
+    search_fields = (
+
+        'material_code',
+
+        'material_name',
+
+        'category'
+
     )
 
     list_filter = (
+
+        'category',
+
+        'status'
+
+    )
+
+
+# STOCK TRANSACTION ADMIN
+
+@admin.register(StockTransaction)
+
+class StockTransactionAdmin(admin.ModelAdmin):
+
+    list_display = (
+
+        'transaction_no',
+
         'project',
+
         'material',
+
         'transaction_type',
+
+        'quantity',
+
+        'status',
+
+        'created_by',
+
+        'approved_by',
+
+        'transaction_date'
+
     )
 
     search_fields = (
-        'project__project_name',
-        'material__material_name',
+
+        'transaction_no',
+
+        'material__material_code',
+
+        'material__material_name'
+
     )
 
-    def current_stock(self, obj):
+    list_filter = (
 
-        return StockTransaction.get_current_stock(
-            obj.project,
-            obj.material
-        )
+        'transaction_type',
 
-    current_stock.short_description = 'Current Stock'
+        'status',
 
+        'transaction_date'
 
-@admin.register(ProjectStockSummary)
-class ProjectStockSummaryAdmin(admin.ModelAdmin):
+    )
 
-    change_list_template = None
 
-    def changelist_view(self, request, extra_context=None):
+# MATERIAL TRANSFER ADMIN
 
-        selected_project = request.GET.get('project')
+@admin.register(MaterialTransfer)
 
-        projects = Project.objects.all()
+class MaterialTransferAdmin(admin.ModelAdmin):
 
-        html = """
+    list_display = (
 
-        <html>
+        'transfer_no',
 
-        <head>
+        'from_project',
 
-        <title>Project Stock Summary</title>
+        'to_project',
 
-        <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        >
+        'material',
 
-        </head>
+        'quantity',
 
-        <body style="background-color:#f5f7fa;">
+        'approved_by',
 
-        <div class="container mt-4">
+        'transfer_date'
 
-        <h1 class="mb-4">
-        Project Stock Summary
-        </h1>
+    )
 
-        <form method="GET" class="mb-4">
+    search_fields = (
 
-        <div class="row">
+        'transfer_no',
 
-        <div class="col-md-4">
+        'material__material_code'
 
-        <select
-        name="project"
-        class="form-select"
-        onchange="this.form.submit()"
-        >
+    )
 
-        <option value="">
-        All Projects
-        </option>
+    list_filter = (
 
-        """
+        'transfer_date',
 
-        for project in projects:
-
-            selected = ""
-
-            if selected_project == str(project.id):
-                selected = "selected"
-
-            html += f"""
-
-            <option
-            value="{project.id}"
-            {selected}
-            >
-            {project.project_name}
-            </option>
-
-            """
-
-        html += """
-
-        </select>
-
-        </div>
-
-        </div>
-
-        </form>
-
-        <div class="card shadow-sm">
-
-        <div class="card-body">
-
-        <table class="table table-bordered table-hover">
-
-        <thead class="table-dark">
-
-        <tr>
-
-        <th>Project</th>
-        <th>Material</th>
-        <th>Size</th>
-        <th>Current Stock</th>
-
-        </tr>
-
-        </thead>
-
-        <tbody>
-
-        """
-
-        total_stock = 0
-        total_materials = 0
-
-        materials = Material.objects.all()
-
-        for material in materials:
-
-            if selected_project:
-
-                project = Project.objects.get(
-                    id=selected_project
-                )
-
-                stock = StockTransaction.get_current_stock(
-                    project,
-                    material
-                )
-
-                if stock > 0:
-
-                    total_stock += stock
-                    total_materials += 1
-
-                    html += f"""
-
-                    <tr>
-
-                    <td>{project.project_name}</td>
-                    <td>{material.material_name}</td>
-                    <td>{material.size}</td>
-                    <td>{stock}</td>
-
-                    </tr>
-
-                    """
-
-            else:
-
-                stock_data = material.all_project_stock()
-
-                for project_name, stock in stock_data.items():
-
-                    total_stock += stock
-                    total_materials += 1
-
-                    html += f"""
-
-                    <tr>
-
-                    <td>{project_name}</td>
-                    <td>{material.material_name}</td>
-                    <td>{material.size}</td>
-                    <td>{stock}</td>
-
-                    </tr>
-
-                    """
-
-        html += f"""
-
-        </tbody>
-
-        </table>
-
-        </div>
-
-        </div>
-
-        <div class="row mt-4">
-
-        <div class="col-md-6">
-
-        <div class="card shadow-sm">
-
-        <div class="card-body">
-
-        <h5>Total Materials</h5>
-
-        <h2>{total_materials}</h2>
-
-        </div>
-
-        </div>
-
-        </div>
-
-        <div class="col-md-6">
-
-        <div class="card shadow-sm">
-
-        <div class="card-body">
-
-        <h5>Total Inventory Qty</h5>
-
-        <h2>{total_stock}</h2>
-
-        </div>
-
-        </div>
-
-        </div>
-
-        </div>
-
-        </div>
-
-        </body>
-
-        </html>
-
-        """
-
-        return HttpResponse(html)
+    )
