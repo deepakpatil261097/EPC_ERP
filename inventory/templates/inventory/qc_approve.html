@@ -1,0 +1,228 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2>
+
+            QC Approval
+
+        </h2>
+
+        <p class="text-muted mb-0">
+
+            Inspect and approve
+            received GRN material
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- QC CARD -->
+
+<div class="erp-card">
+
+    <div class="row mb-4">
+
+        <div class="col-md-3">
+
+            <label class="text-muted small">
+
+                GRN No
+
+            </label>
+
+            <div class="fw-semibold">
+
+                {{ transaction.grn_no }}
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <label class="text-muted small">
+
+                Vendor
+
+            </label>
+
+            <div class="fw-semibold">
+
+                {{ transaction.vendor_name }}
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <label class="text-muted small">
+
+                Project
+
+            </label>
+
+            <div class="fw-semibold">
+
+                {{ transaction.project.project_code }}
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <label class="text-muted small">
+
+                Material
+
+            </label>
+
+            <div class="fw-semibold">
+
+                {{ transaction.material.material_code }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- QC FORM -->
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="row g-4">
+
+            <!-- RECEIVED -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Received Qty
+
+                </label>
+
+                <input
+                    type="number"
+                    class="form-control"
+                    value="{{ transaction.received_qty }}"
+                    readonly
+                >
+
+            </div>
+
+            <!-- APPROVED -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Approved Qty
+
+                </label>
+
+                <input
+                    type="number"
+                    step="0.01"
+                    name="approved_qty"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <!-- REJECTED -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Rejected Qty
+
+                </label>
+
+                <input
+                    type="number"
+                    step="0.01"
+                    name="rejected_qty"
+                    class="form-control"
+                    value="0"
+                    required
+                >
+
+            </div>
+
+            <!-- HOLD -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Hold Qty
+
+                </label>
+
+                <input
+                    type="number"
+                    step="0.01"
+                    name="hold_qty"
+                    class="form-control"
+                    value="0"
+                    required
+                >
+
+            </div>
+
+            <!-- REMARKS -->
+
+            <div class="col-md-12">
+
+                <label class="form-label">
+
+                    QC Remarks
+
+                </label>
+
+                <textarea
+                    name="remarks"
+                    rows="4"
+                    class="form-control"
+                ></textarea>
+
+            </div>
+
+        </div>
+
+        <!-- BUTTON -->
+
+        <div class="mt-4">
+
+            <button
+                type="submit"
+                class="btn btn-success"
+            >
+
+                Submit QC Approval
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

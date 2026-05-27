@@ -18,8 +18,8 @@
 
             Manage materials,
             stock movements,
-            inventory summary
-            and analytics
+            QC approvals
+            and inventory analytics
 
         </p>
 
@@ -119,6 +119,41 @@
 
     </div>
 
+    <!-- QC PENDING -->
+
+    <div class="col-md-3">
+
+        <div class="erp-card">
+
+            <div class="card-title-small">
+
+                QC Pending
+
+            </div>
+
+            <div class="card-value text-warning">
+
+                {{ pending_qc }}
+
+            </div>
+
+            <div class="mt-3">
+
+                <a
+                    href="/qc-pending/"
+                    class="btn btn-sm btn-primary"
+                >
+
+                    Open QC
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
 <!-- MODULE SECTION -->
@@ -171,13 +206,46 @@
 
             <p class="text-muted">
 
-                Manage stock IN,
-                OUT and material transfers.
+                Manage GRN,
+                stock issue,
+                and transfers.
 
             </p>
 
             <a
                 href="/transactions/"
+                class="btn btn-primary"
+            >
+
+                Open
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- QC MODULE -->
+
+    <div class="col-md-4">
+
+        <div class="erp-card">
+
+            <h5 class="mb-3">
+
+                QC Pending
+
+            </h5>
+
+            <p class="text-muted">
+
+                Inspect and approve
+                inward materials.
+
+            </p>
+
+            <a
+                href="/qc-pending/"
                 class="btn btn-primary"
             >
 
@@ -204,7 +272,7 @@
             <p class="text-muted">
 
                 View project wise
-                inventory summary.
+                inventory stock summary.
 
             </p>
 

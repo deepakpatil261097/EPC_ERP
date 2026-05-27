@@ -166,6 +166,20 @@ def inventory_dashboard(request):
         MaterialTransfer.objects.count()
     )
 
+    # QC PENDING
+
+    pending_qc = (
+
+        StockTransaction.objects.filter(
+
+            transaction_type='GRN',
+
+            qc_status='Pending'
+
+        ).count()
+
+    )
+
     low_stock_count = 0
 
     materials = Material.objects.all()
@@ -198,6 +212,9 @@ def inventory_dashboard(request):
         'low_stock_count':
         low_stock_count,
 
+        'pending_qc':
+        pending_qc,
+
     }
 
     return render(
@@ -207,7 +224,6 @@ def inventory_dashboard(request):
         context
 
     )
-
 
 # MATERIALS PAGE
 
@@ -641,15 +657,29 @@ def add_transaction(request):
             'material'
         )
 
-        quantity = float(
-            request.POST.get(
-                'quantity'
-            )
-        )
+        # GRN QTY
 
-        remarks = request.POST.get(
-            'remarks'
-        )
+        if transaction_type == 'GRN':
+
+            quantity = float(
+
+                request.POST.get(
+                    'received_qty'
+                ) or 0
+
+            )
+
+        # IN / OUT QTY
+
+        else:
+
+            quantity = float(
+
+                request.POST.get(
+                    'quantity'
+                ) or 0
+
+            )
 
         project = Project.objects.get(
             id=project_id
@@ -665,6 +695,8 @@ def add_transaction(request):
                 material
             )
         )
+
+        # OUT CHECK
 
         if (
             transaction_type == "OUT"
@@ -689,11 +721,21 @@ def add_transaction(request):
 
                 quantity=quantity,
 
+                received_qty=quantity,
+
+                vendor_name=request.POST.get(
+                    'vendor_name'
+                ),
+
+                invoice_no=request.POST.get(
+                    'invoice_no'
+                ),
+
                 created_by=request.user.username,
 
-                remarks=remarks,
-
-                status='Pending'
+                remarks=request.POST.get(
+                    'remarks'
+                )
 
             )
 
@@ -720,7 +762,6 @@ def add_transaction(request):
         context
 
     )
-
 
 # PROJECTS PAGE
 
@@ -1037,6 +1078,180 @@ def inventory_analytics(request):
 
         request,
         'inventory/inventory_analytics.html',
+        context
+
+    )
+    # APPROVE TRANSACTION
+
+def approve_transaction(request, id):
+
+    if not request.user.is_authenticated:
+        return redirect('/')
+
+    transaction = StockTransaction.objects.get(
+        id=id
+    )
+
+    transaction.status = 'Approved'
+
+    transaction.approved_by = (
+        request.user.username
+    )
+
+    transaction.save()
+
+    return redirect(
+        '/transactions/'
+    )
+
+
+# REJECT TRANSACTION
+
+def reject_transaction(request, id):
+
+    if not request.user.is_authenticated:
+        return redirect('/')
+
+    transaction = StockTransaction.objects.get(
+        id=id
+    )
+
+    transaction.status = 'Rejected'
+
+    transaction.approved_by = (
+        request.user.username
+    )
+
+    transaction.save()
+
+    return redirect(
+        '/transactions/'
+    )
+    # QC PENDING PAGE
+
+def qc_pending_page(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/')
+
+    transactions = (
+
+        StockTransaction.objects.filter(
+
+            transaction_type='GRN'
+
+        ).order_by('-id')
+
+    )
+
+    context = {
+
+        'transactions': transactions
+
+    }
+
+    return render(
+
+        request,
+        'inventory/qc_pending.html',
+        context
+
+    )
+
+
+# QC APPROVAL PAGE
+
+def qc_approve_page(request, id):
+
+    if not request.user.is_authenticated:
+        return redirect('/')
+
+    transaction = StockTransaction.objects.get(
+        id=id
+    )
+
+    if request.method == "POST":
+
+        approved_qty = float(
+
+            request.POST.get(
+                'approved_qty'
+            )
+
+        )
+
+        rejected_qty = float(
+
+            request.POST.get(
+                'rejected_qty'
+            )
+
+        )
+
+        hold_qty = float(
+
+            request.POST.get(
+                'hold_qty'
+            )
+
+        )
+
+        qc_remarks = request.POST.get(
+            'remarks'
+        )
+
+        transaction.approved_qty = (
+            approved_qty
+        )
+
+        transaction.rejected_qty = (
+            rejected_qty
+        )
+
+        transaction.hold_qty = (
+            hold_qty
+        )
+
+        transaction.remarks = (
+            qc_remarks
+        )
+
+        transaction.qc_done_by = (
+            request.user.username
+        )
+
+        if rejected_qty > 0 or hold_qty > 0:
+
+            transaction.qc_status = (
+                'Partial'
+            )
+
+        else:
+
+            transaction.qc_status = (
+                'Approved'
+            )
+
+        transaction.status = (
+            'Approved'
+        )
+
+        transaction.save()
+
+        return redirect(
+            '/qc-pending/'
+        )
+
+    context = {
+
+        'transaction': transaction
+
+    }
+
+    return render(
+
+        request,
+        'inventory/qc_approve.html',
         context
 
     )

@@ -4,11 +4,11 @@
 
 <!-- PAGE HEADER -->
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
 
     <div>
 
-        <h2>
+        <h2 class="mb-1">
 
             Stock Movements
 
@@ -16,15 +16,12 @@
 
         <p class="text-muted mb-0">
 
-            Manage stock IN,
-            stock OUT and
-            material transfers
+            Inventory transactions,
+            approvals and stock movement history
 
         </p>
 
     </div>
-
-    <!-- ACTION BUTTONS -->
 
     <div class="d-flex gap-2">
 
@@ -33,7 +30,7 @@
             class="btn btn-primary"
         >
 
-            Stock IN / OUT
+            Add Transaction
 
         </a>
 
@@ -56,11 +53,23 @@
 
     <div class="table-responsive">
 
-        <table class="table align-middle">
+        <table class="table align-middle table-hover">
 
             <thead>
 
                 <tr>
+
+                    <th>
+
+                        Txn No
+
+                    </th>
+
+                    <th>
+
+                        Date
+
+                    </th>
 
                     <th>
 
@@ -70,37 +79,31 @@
 
                     <th>
 
-                        Material Code
+                        Material
 
                     </th>
 
                     <th>
 
-                        Material Name
+                        Type
 
                     </th>
 
                     <th>
 
-                        Size
+                        Qty
 
                     </th>
 
                     <th>
 
-                        Movement Type
+                        Status
 
                     </th>
 
                     <th>
 
-                        Quantity
-
-                    </th>
-
-                    <th>
-
-                        Current Stock
+                        Action
 
                     </th>
 
@@ -114,44 +117,75 @@
 
                 <tr>
 
-                    <td>
-
-                        {{ transaction.project.project_code }}
-
-                    </td>
+                    <!-- TRANSACTION NO -->
 
                     <td>
 
-                        {{ transaction.material.material_code }}
+                        <div class="fw-semibold">
+
+                            {{ transaction.transaction_no }}
+
+                        </div>
 
                     </td>
+
+                    <!-- DATE -->
 
                     <td>
 
-                        {{ transaction.material.material_name }}
+                        <div style="min-width:120px;">
+
+                            {{ transaction.transaction_date|date:"d-M-Y" }}
+
+                            <br>
+
+                            <small class="text-muted">
+
+                                {{ transaction.transaction_date|time:"H:i" }}
+
+                            </small>
+
+                        </div>
 
                     </td>
+
+                    <!-- PROJECT -->
 
                     <td>
 
-                        {{ transaction.material.size }}
+                        <div class="fw-semibold">
+
+                            {{ transaction.project.project_code }}
+
+                        </div>
 
                     </td>
+
+                    <!-- MATERIAL -->
+
+                    <td>
+
+                        <div class="fw-semibold">
+
+                            {{ transaction.material.material_code }}
+
+                        </div>
+
+                        <small class="text-muted">
+
+                            {{ transaction.material.material_name }}
+
+                        </small>
+
+                    </td>
+
+                    <!-- TYPE -->
 
                     <td>
 
                         {% if transaction.transaction_type == 'IN' %}
 
-                            <span
-                                style="
-                                    background:#dcfce7;
-                                    color:#15803d;
-                                    padding:6px 12px;
-                                    border-radius:20px;
-                                    font-size:13px;
-                                    font-weight:600;
-                                "
-                            >
+                            <span class="badge bg-success px-3 py-2">
 
                                 IN
 
@@ -159,16 +193,7 @@
 
                         {% else %}
 
-                            <span
-                                style="
-                                    background:#fee2e2;
-                                    color:#dc2626;
-                                    padding:6px 12px;
-                                    border-radius:20px;
-                                    font-size:13px;
-                                    font-weight:600;
-                                "
-                            >
+                            <span class="badge bg-danger px-3 py-2">
 
                                 OUT
 
@@ -178,17 +203,115 @@
 
                     </td>
 
+                    <!-- QTY -->
+
                     <td>
 
-                        {{ transaction.quantity }}
-                        {{ transaction.material.unit }}
+                        <div class="fw-semibold">
+
+                            {{ transaction.quantity }}
+
+                        </div>
 
                     </td>
 
+                    <!-- STATUS -->
+
                     <td>
 
-                        {{ transaction.current_stock }}
-                        {{ transaction.material.unit }}
+                        {% if transaction.status == 'Approved' %}
+
+                            <span class="badge bg-success px-3 py-2">
+
+                                Approved
+
+                            </span>
+
+                        {% elif transaction.status == 'Rejected' %}
+
+                            <span class="badge bg-danger px-3 py-2">
+
+                                Rejected
+
+                            </span>
+
+                        {% elif transaction.status == 'Pending' %}
+
+                            <span class="badge bg-warning text-dark px-3 py-2">
+
+                                Pending
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary px-3 py-2">
+
+                                Draft
+
+                            </span>
+
+                        {% endif %}
+
+                        <br>
+
+                        <small class="text-muted">
+
+                            {{ transaction.created_by }}
+
+                        </small>
+
+                    </td>
+
+                    <!-- ACTION -->
+
+                    <td>
+
+                        {% if transaction.status == 'Pending' %}
+
+                            <div class="d-flex flex-column gap-1">
+
+                                <a
+                                    href="/approve-transaction/{{ transaction.id }}/"
+                                    class="btn btn-sm btn-success"
+                                >
+
+                                    Approve
+
+                                </a>
+
+                                <a
+                                    href="/reject-transaction/{{ transaction.id }}/"
+                                    class="btn btn-sm btn-danger"
+                                >
+
+                                    Reject
+
+                                </a>
+
+                            </div>
+
+                        {% else %}
+
+                            <small class="text-muted">
+
+                                {{ transaction.approved_by }}
+
+                            </small>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="8" class="text-center py-5 text-muted">
+
+                        No Transactions Found
 
                     </td>
 

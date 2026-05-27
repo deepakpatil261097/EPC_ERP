@@ -138,6 +138,8 @@ class StockTransaction(models.Model):
 
     TRANSACTION_TYPES = [
 
+        ('GRN', 'GRN'),
+
         ('IN', 'IN'),
 
         ('OUT', 'OUT')
@@ -153,6 +155,18 @@ class StockTransaction(models.Model):
         ('Approved', 'Approved'),
 
         ('Rejected', 'Rejected')
+
+    ]
+
+    QC_STATUS_CHOICES = [
+
+        ('Pending', 'Pending'),
+
+        ('Approved', 'Approved'),
+
+        ('Rejected', 'Rejected'),
+
+        ('Partial', 'Partial')
 
     ]
 
@@ -174,7 +188,7 @@ class StockTransaction(models.Model):
 
     transaction_type = models.CharField(
 
-        max_length=10,
+        max_length=20,
 
         choices=TRANSACTION_TYPES
 
@@ -238,6 +252,90 @@ class StockTransaction(models.Model):
 
     )
 
+    # GRN / QC DETAILS
+
+    grn_no = models.CharField(
+
+        max_length=100,
+
+        blank=True,
+
+        null=True
+
+    )
+
+    vendor_name = models.CharField(
+
+        max_length=255,
+
+        blank=True,
+
+        null=True
+
+    )
+
+    invoice_no = models.CharField(
+
+        max_length=100,
+
+        blank=True,
+
+        null=True
+
+    )
+
+    received_qty = models.FloatField(
+
+        default=0
+
+    )
+
+    approved_qty = models.FloatField(
+
+        default=0
+
+    )
+
+    rejected_qty = models.FloatField(
+
+        default=0
+
+    )
+
+    hold_qty = models.FloatField(
+
+        default=0
+
+    )
+
+    qc_status = models.CharField(
+
+        max_length=20,
+
+        choices=QC_STATUS_CHOICES,
+
+        default='Pending'
+
+    )
+
+    qc_done_by = models.CharField(
+
+        max_length=100,
+
+        blank=True,
+
+        null=True
+
+    )
+
+    qc_date = models.DateTimeField(
+
+        blank=True,
+
+        null=True
+
+    )
+
     def save(self, *args, **kwargs):
 
         if not self.transaction_no:
@@ -249,11 +347,43 @@ class StockTransaction(models.Model):
 
             )
 
-            self.transaction_no = (
+            # GRN
 
-                f"TRN-{last_id:05d}"
+            if self.transaction_type == 'GRN':
 
-            )
+                self.transaction_no = (
+
+                    f"GRN{last_id:05d}"
+
+                )
+
+            # MATERIAL ISSUE
+
+            elif self.transaction_type == 'OUT':
+
+                self.transaction_no = (
+
+                    f"MIV{last_id:05d}"
+
+                )
+
+            # INTERNAL MATERIAL IN
+
+            elif self.transaction_type == 'IN':
+
+                self.transaction_no = (
+
+                    f"MIN{last_id:05d}"
+
+                )
+
+            else:
+
+                self.transaction_no = (
+
+                    f"TXN{last_id:05d}"
+
+                )
 
         super().save(*args, **kwargs)
 
@@ -284,15 +414,13 @@ class StockTransaction(models.Model):
 
                 material=material,
 
-                transaction_type='IN',
-
                 status='Approved'
 
             ).aggregate(
 
-                models.Sum('quantity')
+                models.Sum('approved_qty')
 
-            )['quantity__sum']
+            )['approved_qty__sum']
 
             or 0
 
@@ -406,7 +534,7 @@ class MaterialTransfer(models.Model):
 
             self.transfer_no = (
 
-                f"TRF-{last_id:05d}"
+                f"TRF{last_id:05d}"
 
             )
 

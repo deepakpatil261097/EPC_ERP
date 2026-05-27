@@ -10,17 +10,25 @@ from .views import (
 
     materials_page,
 
+    export_materials_excel,
+
     add_material,
 
     upload_materials,
-
-    export_materials_excel,
 
     transfer_material,
 
     transactions_page,
 
     add_transaction,
+
+    approve_transaction,
+
+    reject_transaction,
+
+    qc_pending_page,
+
+    qc_approve_page,
 
     projects_page,
 
@@ -34,172 +42,94 @@ from .views import (
 
 urlpatterns = [
 
-    # LOGIN
-
     path(
-
         '',
-
-        login_page,
-
-        name='login'
-
+        login_page
     ),
 
-    # HOME
-
     path(
-
         'home/',
-
-        home,
-
-        name='home'
-
+        home
     ),
 
-    # INVENTORY DASHBOARD
-
     path(
-
         'inventory-dashboard/',
-
-        inventory_dashboard,
-
-        name='inventory_dashboard'
-
+        inventory_dashboard
     ),
 
-    # MATERIALS
-
     path(
-
         'materials/',
-
-        materials_page,
-
-        name='materials'
-
+        materials_page
     ),
 
-    # ADD MATERIAL
-
     path(
-
-        'add-material/',
-
-        add_material,
-
-        name='add_material'
-
-    ),
-
-    # UPLOAD MATERIALS
-
-    path(
-
-        'upload-materials/',
-
-        upload_materials,
-
-        name='upload_materials'
-
-    ),
-
-    # EXPORT MATERIALS
-
-    path(
-
         'export-materials-excel/',
-
-        export_materials_excel,
-
-        name='export_materials_excel'
-
+        export_materials_excel
     ),
 
-    # STOCK MOVEMENTS
-
     path(
-
-        'transactions/',
-
-        transactions_page,
-
-        name='transactions'
-
+        'add-material/',
+        add_material
     ),
 
-    # ADD TRANSACTION
-
     path(
-
-        'add-transaction/',
-
-        add_transaction,
-
-        name='add_transaction'
-
+        'upload-materials/',
+        upload_materials
     ),
 
-    # MATERIAL TRANSFER
-
     path(
-
         'transfer-material/',
-
-        transfer_material,
-
-        name='transfer_material'
-
+        transfer_material
     ),
 
-    # PROJECTS
+    path(
+        'transactions/',
+        transactions_page
+    ),
 
     path(
+        'add-transaction/',
+        add_transaction
+    ),
 
+    path(
+        'approve-transaction/<int:id>/',
+        approve_transaction
+    ),
+
+    path(
+        'reject-transaction/<int:id>/',
+        reject_transaction
+    ),
+
+    path(
+        'qc-pending/',
+        qc_pending_page
+    ),
+
+    path(
+        'qc-approve/<int:id>/',
+        qc_approve_page
+    ),
+
+    path(
         'projects/',
-
-        projects_page,
-
-        name='projects'
-
+        projects_page
     ),
 
-    # ADD PROJECT
-
     path(
-
         'add-project/',
-
-        add_project,
-
-        name='add_project'
-
+        add_project
     ),
 
-    # SUMMARY
-
     path(
-
         'summary/',
-
-        summary_page,
-
-        name='summary'
-
+        summary_page
     ),
 
-    # INVENTORY ANALYTICS
-
     path(
-
         'inventory-analytics/',
-
-        inventory_analytics,
-
-        name='inventory_analytics'
-
+        inventory_analytics
     ),
 
 ]
