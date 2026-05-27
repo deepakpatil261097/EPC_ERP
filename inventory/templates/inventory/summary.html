@@ -2,47 +2,120 @@
 
 {% block content %}
 
-<div class="card shadow-sm p-4 mb-4">
+<!-- PAGE HEADER -->
 
-    <div class="d-flex justify-content-between align-items-center">
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h3>
-            Stock Summary
-        </h3>
+    <div>
 
-        <div>
+        <h2>
 
-            <span class="badge bg-primary">
+            Inventory Summary
 
-                Total Materials :
+        </h2>
+
+        <p class="text-muted mb-0">
+
+            View project wise
+            inventory stock summary
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- SUMMARY CARDS -->
+
+<div class="row g-3 mb-4">
+
+    <!-- TOTAL MATERIALS -->
+
+    <div class="col-md-2">
+
+        <div class="erp-card">
+
+            <div
+                style="
+                    color:#6b7280;
+                    font-size:14px;
+                    margin-bottom:6px;
+                    font-weight:500;
+                "
+            >
+
+                Total Materials
+
+            </div>
+
+            <div
+                style="
+                    font-size:18px;
+                    font-weight:600;
+                    color:#111827;
+                "
+            >
+
                 {{ total_materials }}
 
-            </span>
-
-            <span class="badge bg-success ms-2">
-
-                Total Qty :
-                {{ total_inventory_qty }}
-
-            </span>
+            </div>
 
         </div>
 
     </div>
 
-    <hr>
+    <!-- TOTAL QTY -->
+
+    <div class="col-md-2">
+
+        <div class="erp-card">
+
+            <div
+                style="
+                    color:#6b7280;
+                    font-size:14px;
+                    margin-bottom:6px;
+                    font-weight:500;
+                "
+            >
+
+                Total Qty
+
+            </div>
+
+            <div
+                style="
+                    font-size:18px;
+                    font-weight:600;
+                    color:#111827;
+                "
+            >
+
+                {{ total_inventory_qty }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- FILTER CARD -->
+
+<div class="erp-card mb-4">
 
     <form method="GET">
 
-        <div class="row g-3">
+        <div class="row align-items-end">
 
-            <!-- PROJECT FILTER -->
+            <!-- PROJECT -->
 
             <div class="col-md-4">
 
                 <label class="form-label">
 
-                    Project
+                    Project Code
 
                 </label>
 
@@ -52,21 +125,23 @@
                 >
 
                     <option value="">
+
                         All Projects
+
                     </option>
 
                     {% for project in projects %}
 
-                    <option
-                        value="{{ project.id }}"
-                        {% if selected_project == project.id|stringformat:"s" %}
-                        selected
-                        {% endif %}
-                    >
+                        <option
+                            value="{{ project.id }}"
+                            {% if selected_project == project.id|stringformat:"s" %}
+                                selected
+                            {% endif %}
+                        >
 
-                        {{ project.project_name }}
+                            {{ project.project_code }}
 
-                    </option>
+                        </option>
 
                     {% endfor %}
 
@@ -74,36 +149,40 @@
 
             </div>
 
-            <!-- MATERIAL SEARCH -->
+            <!-- SEARCH -->
 
-            <div class="col-md-5">
+            <div class="col-md-4">
 
                 <label class="form-label">
 
-                    Search Material
+                    Material Code
 
                 </label>
 
                 <input
                     type="text"
                     name="search"
-                    class="form-control"
-                    placeholder="Search Material Code or Material Name"
-                    value="{% if search %}{{ search }}{% endif %}"
-                    style="text-align:left;"
+                    value="{{ search }}"
+                    class="form-control text-start"
+                    placeholder="Search Material Code"
+                    style="
+                        text-align:left;
+                    "
                 >
 
             </div>
 
             <!-- BUTTON -->
 
-            <div class="col-md-3 d-flex align-items-end">
+            <div class="col-md-2">
 
                 <button
                     type="submit"
                     class="btn btn-primary w-100"
                 >
-                    Search
+
+                    Apply
+
                 </button>
 
             </div>
@@ -114,38 +193,63 @@
 
 </div>
 
-<div class="card shadow-sm p-4">
+<!-- TABLE -->
+
+<div class="erp-card">
 
     <div class="table-responsive">
 
-        <table class="table table-hover align-middle">
+        <table class="table align-middle">
 
-            <thead class="table-dark">
+            <thead
+                style="
+                    background:#f9fafb;
+                    color:#374151;
+                "
+            >
 
                 <tr>
 
                     <th>
-                        Project
+
+                        Project Code
+
                     </th>
 
                     <th>
+
                         Material Code
+
                     </th>
 
                     <th>
-                        Material
+
+                        Material Name
+
                     </th>
 
                     <th>
+
+                        Category
+
+                    </th>
+
+                    <th>
+
                         Size
+
                     </th>
 
                     <th>
-                        Current Stock
+
+                        Stock
+
                     </th>
 
                     <th>
+
                         Unit
+
                     </th>
 
                 </tr>
@@ -159,47 +263,44 @@
                 <tr>
 
                     <td>
+
                         {{ item.project }}
+
                     </td>
 
                     <td>
+
                         {{ item.material_code }}
+
                     </td>
 
                     <td>
+
                         {{ item.material }}
+
                     </td>
 
                     <td>
+
+                        {{ item.category }}
+
+                    </td>
+
+                    <td>
+
                         {{ item.size }}
-                    </td>
-
-                    <td>
-
-                        <span class="fw-bold text-primary">
-
-                            {{ item.stock }}
-
-                        </span>
 
                     </td>
 
                     <td>
+
+                        {{ item.stock }}
+
+                    </td>
+
+                    <td>
+
                         {{ item.unit }}
-                    </td>
-
-                </tr>
-
-                {% empty %}
-
-                <tr>
-
-                    <td
-                        colspan="6"
-                        class="text-center text-muted"
-                    >
-
-                        No stock data found
 
                     </td>
 

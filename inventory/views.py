@@ -933,3 +933,94 @@ def summary_page(request):
         context
 
     )
+    # INVENTORY ANALYTICS
+
+def inventory_analytics(request):
+
+    if not request.user.is_authenticated:
+        return redirect('/')
+
+    total_in = (
+        StockTransaction.objects.filter(
+            transaction_type='IN'
+        ).count()
+    )
+
+    total_out = (
+        StockTransaction.objects.filter(
+            transaction_type='OUT'
+        ).count()
+    )
+
+    total_materials = (
+        Material.objects.count()
+    )
+
+    low_stock_count = 0
+
+    materials = Material.objects.all()
+
+    for material in materials:
+
+        stock_data = (
+            material.all_project_stock()
+        )
+
+        total_stock = sum(
+            stock_data.values()
+        )
+
+        if total_stock <= material.min_stock:
+
+            low_stock_count += 1
+
+    category_data = []
+
+    categories = (
+        Material.objects.values_list(
+            'category',
+            flat=True
+        ).distinct()
+    )
+
+    for category in categories:
+
+        count = (
+            Material.objects.filter(
+                category=category
+            ).count()
+        )
+
+        category_data.append({
+
+            'category': category,
+            'count': count
+
+        })
+
+    context = {
+
+        'total_in':
+        total_in,
+
+        'total_out':
+        total_out,
+
+        'total_materials':
+        total_materials,
+
+        'low_stock_count':
+        low_stock_count,
+
+        'category_data':
+        category_data,
+
+    }
+
+    return render(
+
+        request,
+        'inventory/inventory_analytics.html',
+        context
+
+    )

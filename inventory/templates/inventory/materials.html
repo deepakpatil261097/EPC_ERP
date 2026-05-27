@@ -2,112 +2,114 @@
 
 {% block content %}
 
-<div class="card shadow-sm p-4 mb-4">
+<!-- PAGE HEADER -->
 
-    <div class="d-flex justify-content-between align-items-center">
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h3>
-            Materials
-        </h3>
+    <div>
 
-        <div>
+        <h2>
 
-            <a
-                href="/upload-materials/"
-                class="btn btn-success me-2"
-            >
-                Upload Excel
-            </a>
+            Material Master
 
-            <a
-                href="/export-materials/"
-                class="btn btn-warning me-2"
-            >
-                Export Excel
-            </a>
+        </h2>
 
-            <a
-                href="/transfer-material/"
-                class="btn btn-info me-2"
-            >
-                Transfer Material
-            </a>
+        <p class="text-muted mb-0">
 
-            <a
-                href="/add-material/"
-                class="btn btn-primary"
-            >
-                + Add Material
-            </a>
+            Create and manage
+            inventory materials
 
-        </div>
+        </p>
 
     </div>
 
-    <hr>
+    <!-- ACTION BUTTONS -->
 
-    <div class="row">
+    <div class="d-flex gap-2">
 
-        <div class="col-md-5">
+        <a
+            href="/add-material/"
+            class="btn btn-primary"
+        >
 
-            <input
-                type="text"
-                id="materialSearch"
-                class="form-control"
-                placeholder="Search Material Code / Material Name"
-                onkeyup="searchMaterial()"
-                style="text-align:left;"
-            >
+            Add Material
 
-        </div>
+        </a>
+
+        <a
+            href="/upload-materials/"
+            class="btn btn-primary"
+        >
+
+            Upload Excel
+
+        </a>
+
+        <a
+            href="/export-materials-excel/"
+            class="btn btn-primary"
+        >
+
+            Export Excel
+
+        </a>
 
     </div>
 
 </div>
 
-<div class="card shadow-sm p-4">
+<!-- TABLE CARD -->
+
+<div class="erp-card">
 
     <div class="table-responsive">
 
-        <table
-            class="table table-hover align-middle"
-            id="materialTable"
-        >
+        <table class="table align-middle">
 
-            <thead class="table-dark">
+            <thead>
 
                 <tr>
 
                     <th>
+
                         Material Code
+
                     </th>
 
                     <th>
-                        Material
+
+                        Material Name
+
                     </th>
 
                     <th>
+
                         Category
+
                     </th>
 
                     <th>
+
                         Size
+
                     </th>
 
                     <th>
+
                         Unit
+
                     </th>
 
                     <th>
+
                         Min Stock
+
                     </th>
 
                     <th>
+
                         Total Stock
-                    </th>
 
-                    <th>
-                        Status
                     </th>
 
                 </tr>
@@ -118,40 +120,36 @@
 
                 {% for material in materials %}
 
-                <tr
-
-                    {% if material.total_stock <= material.min_stock %}
-
-                    class="table-danger"
-
-                    {% endif %}
-
-                >
+                <tr>
 
                     <td>
+
                         {{ material.material_code }}
+
                     </td>
 
                     <td>
+
                         {{ material.material_name }}
-                    </td>
-
-                    <td>
-
-                        <span class="badge bg-info">
-
-                            {{ material.category }}
-
-                        </span>
 
                     </td>
 
                     <td>
+
+                        {{ material.category }}
+
+                    </td>
+
+                    <td>
+
                         {{ material.size }}
+
                     </td>
 
                     <td>
+
                         {{ material.unit }}
+
                     </td>
 
                     <td>
@@ -162,48 +160,7 @@
 
                     <td>
 
-                        <span class="fw-bold text-primary">
-
-                            {{ material.total_stock }}
-
-                        </span>
-
-                    </td>
-
-                    <td>
-
-                        {% if material.total_stock <= material.min_stock %}
-
-                        <span class="badge bg-danger">
-
-                            LOW STOCK
-
-                        </span>
-
-                        {% else %}
-
-                        <span class="badge bg-success">
-
-                            OK
-
-                        </span>
-
-                        {% endif %}
-
-                    </td>
-
-                </tr>
-
-                {% empty %}
-
-                <tr>
-
-                    <td
-                        colspan="8"
-                        class="text-center text-muted"
-                    >
-
-                        No Materials Found
+                        {{ material.total_stock }}
 
                     </td>
 
@@ -218,54 +175,5 @@
     </div>
 
 </div>
-
-<script>
-
-function searchMaterial() {
-
-    let input = document.getElementById(
-        "materialSearch"
-    ).value.toLowerCase().trim();
-
-    let table = document.getElementById(
-        "materialTable"
-    );
-
-    let tr = table.getElementsByTagName(
-        "tr"
-    );
-
-    for (let i = 1; i < tr.length; i++) {
-
-        let td = tr[i].getElementsByTagName(
-            "td"
-        );
-
-        let found = false;
-
-        for (let j = 0; j < td.length; j++) {
-
-            if (
-                td[j]
-                &&
-                td[j].innerHTML
-                .toLowerCase()
-                .includes(input)
-            ) {
-
-                found = true;
-
-            }
-
-        }
-
-        tr[i].style.display =
-            found ? "" : "none";
-
-    }
-
-}
-
-</script>
 
 {% endblock %}

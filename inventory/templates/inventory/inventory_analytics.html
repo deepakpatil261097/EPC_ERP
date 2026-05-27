@@ -1,0 +1,293 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2>
+
+            Inventory Analytics
+
+        </h2>
+
+        <p class="text-muted mb-0">
+
+            Visual inventory insights
+            and stock analytics
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- TOP CARDS -->
+
+<div class="row g-4 mb-4">
+
+    <!-- TOTAL IN -->
+
+    <div class="col-md-3">
+
+        <div class="erp-card">
+
+            <div class="card-title-small">
+
+                Total IN
+
+            </div>
+
+            <div class="card-value">
+
+                {{ total_in }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TOTAL OUT -->
+
+    <div class="col-md-3">
+
+        <div class="erp-card">
+
+            <div class="card-title-small">
+
+                Total OUT
+
+            </div>
+
+            <div class="card-value">
+
+                {{ total_out }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TOTAL MATERIALS -->
+
+    <div class="col-md-3">
+
+        <div class="erp-card">
+
+            <div class="card-title-small">
+
+                Materials
+
+            </div>
+
+            <div class="card-value">
+
+                {{ total_materials }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- LOW STOCK -->
+
+    <div class="col-md-3">
+
+        <div class="erp-card">
+
+            <div class="card-title-small">
+
+                Low Stock
+
+            </div>
+
+            <div class="card-value text-danger">
+
+                {{ low_stock_count }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- CHART SECTION -->
+
+<div class="row g-4">
+
+    <!-- IN VS OUT -->
+
+    <div class="col-md-6">
+
+        <div class="erp-card">
+
+            <h5 class="mb-4">
+
+                IN vs OUT
+
+            </h5>
+
+            <canvas id="inOutChart">
+
+            </canvas>
+
+        </div>
+
+    </div>
+
+    <!-- MATERIAL CATEGORY -->
+
+    <div class="col-md-6">
+
+        <div class="erp-card">
+
+            <h5 class="mb-4">
+
+                Material Categories
+
+            </h5>
+
+            <canvas id="categoryChart">
+
+            </canvas>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- CHART JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js">
+
+</script>
+
+<script>
+
+    // IN VS OUT
+
+    new Chart(
+
+        document.getElementById(
+            'inOutChart'
+        ),
+
+        {
+
+            type: 'bar',
+
+            data: {
+
+                labels: [
+
+                    'IN',
+                    'OUT'
+
+                ],
+
+                datasets: [{
+
+                    data: [
+
+                        {{ total_in }},
+                        {{ total_out }}
+
+                    ],
+
+                    backgroundColor: [
+
+                        '#93c5fd',
+                        '#fca5a5'
+
+                    ],
+
+                    borderRadius: 10
+
+                }]
+
+            },
+
+            options: {
+
+                plugins: {
+
+                    legend: {
+
+                        display: false
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    );
+
+    // CATEGORY CHART
+
+    new Chart(
+
+        document.getElementById(
+            'categoryChart'
+        ),
+
+        {
+
+            type: 'doughnut',
+
+            data: {
+
+                labels: [
+
+                    {% for item in category_data %}
+
+                        '{{ item.category }}',
+
+                    {% endfor %}
+
+                ],
+
+                datasets: [{
+
+                    data: [
+
+                        {% for item in category_data %}
+
+                            {{ item.count }},
+
+                        {% endfor %}
+
+                    ],
+
+                    backgroundColor: [
+
+                        '#93c5fd',
+                        '#86efac',
+                        '#fcd34d',
+                        '#fca5a5',
+                        '#c4b5fd'
+
+                    ]
+
+                }]
+
+            }
+
+        }
+
+    );
+
+</script>
+
+{% endblock %}

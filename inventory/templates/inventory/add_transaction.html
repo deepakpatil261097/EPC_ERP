@@ -2,48 +2,60 @@
 
 {% block content %}
 
-<div class="card shadow-sm p-4 mb-4">
+<!-- PAGE HEADER -->
 
-    <div class="d-flex justify-content-between align-items-center">
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h3>
-            Add Transaction
-        </h3>
+    <div>
 
-        <a
-            href="/transactions/"
-            class="btn btn-secondary"
-        >
-            Back
-        </a>
+        <h2>
+
+            Stock IN / OUT
+
+        </h2>
+
+        <p class="text-muted mb-0">
+
+            Add inventory stock
+            movements for projects
+
+        </p>
 
     </div>
 
-    <hr>
+</div>
+
+<!-- MAIN CARD -->
+
+<div class="erp-card">
 
     {% if error %}
 
-    <div class="alert alert-danger">
+        <div class="alert alert-danger">
 
-        {{ error }}
+            {{ error }}
 
-    </div>
+        </div>
 
     {% endif %}
+
+    <!-- FORM -->
 
     <form method="POST">
 
         {% csrf_token %}
 
-        <div class="row g-4">
+        <!-- ROW 1 -->
 
-            <!-- TRANSACTION TYPE -->
+        <div class="row mb-4">
 
-            <div class="col-md-2">
+            <!-- MOVEMENT TYPE -->
+
+            <div class="col-md-4">
 
                 <label class="form-label">
 
-                    Transaction Type
+                    Movement Type
 
                 </label>
 
@@ -53,12 +65,22 @@
                     required
                 >
 
+                    <option value="">
+
+                        Select Type
+
+                    </option>
+
                     <option value="IN">
-                        IN
+
+                        Stock IN
+
                     </option>
 
                     <option value="OUT">
-                        OUT
+
+                        Stock OUT
+
                     </option>
 
                 </select>
@@ -67,11 +89,11 @@
 
             <!-- PROJECT -->
 
-            <div class="col-md-3">
+            <div class="col-md-4">
 
                 <label class="form-label">
 
-                    Project
+                    Project Code
 
                 </label>
 
@@ -81,15 +103,19 @@
                     required
                 >
 
-                    {% for project in projects %}
+                    <option value="">
 
-                    <option
-                        value="{{ project.id }}"
-                    >
-
-                        {{ project.project_name }}
+                        Select Project
 
                     </option>
+
+                    {% for project in projects %}
+
+                        <option value="{{ project.id }}">
+
+                            {{ project.project_code }}
+
+                        </option>
 
                     {% endfor %}
 
@@ -97,9 +123,9 @@
 
             </div>
 
-            <!-- MATERIAL CODE -->
+            <!-- MATERIAL -->
 
-            <div class="col-md-3">
+            <div class="col-md-4">
 
                 <label class="form-label">
 
@@ -108,22 +134,26 @@
                 </label>
 
                 <input
-                    type="text"
-                    id="materialCode"
+                    list="material_list"
+                    id="material_code"
+                    name="material"
                     class="form-control"
                     placeholder="Insert Material Code"
-                    list="materialCodeList"
-                    autocomplete="off"
                     required
                 >
 
-                <datalist id="materialCodeList">
+                <datalist id="material_list">
 
                     {% for material in materials %}
 
-                    <option
-                        value="{{ material.material_code }}"
-                    >
+                        <option
+                            value="{{ material.material_code }}"
+                            data-name="{{ material.material_name }}"
+                            data-size="{{ material.size }}"
+                            data-unit="{{ material.unit }}"
+                        >
+
+                        </option>
 
                     {% endfor %}
 
@@ -131,28 +161,34 @@
 
             </div>
 
-            <!-- MATERIAL -->
+        </div>
 
-            <div class="col-md-2">
+        <!-- ROW 2 -->
+
+        <div class="row mb-4">
+
+            <!-- MATERIAL NAME -->
+
+            <div class="col-md-6">
 
                 <label class="form-label">
 
-                    Material
+                    Material Name
 
                 </label>
 
                 <input
                     type="text"
-                    id="materialName"
-                    class="form-control readonly-box"
-                    readonly
+                    id="material_name"
+                    class="form-control"
+                    disabled
                 >
 
             </div>
 
             <!-- SIZE -->
 
-            <div class="col-md-1">
+            <div class="col-md-6">
 
                 <label class="form-label">
 
@@ -162,43 +198,22 @@
 
                 <input
                     type="text"
-                    id="materialSize"
-                    class="form-control readonly-box"
-                    readonly
+                    id="material_size"
+                    class="form-control"
+                    disabled
                 >
 
             </div>
 
-            <!-- UNIT -->
+        </div>
 
-            <div class="col-md-1">
+        <!-- ROW 3 -->
 
-                <label class="form-label">
-
-                    Unit
-
-                </label>
-
-                <input
-                    type="text"
-                    id="materialUnit"
-                    class="form-control readonly-box"
-                    readonly
-                >
-
-            </div>
-
-            <!-- HIDDEN MATERIAL ID -->
-
-            <input
-                type="hidden"
-                name="material"
-                id="materialId"
-            >
+        <div class="row mb-4">
 
             <!-- QUANTITY -->
 
-            <div class="col-md-2">
+            <div class="col-md-4">
 
                 <label class="form-label">
 
@@ -216,16 +231,35 @@
 
             </div>
 
+            <!-- UNIT -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+
+                    Unit
+
+                </label>
+
+                <input
+                    type="text"
+                    id="material_unit"
+                    class="form-control"
+                    disabled
+                >
+
+            </div>
+
         </div>
 
-        <br>
+        <!-- BUTTON -->
 
         <button
             type="submit"
             class="btn btn-primary"
         >
 
-            Save Transaction
+            Save Movement
 
         </button>
 
@@ -233,209 +267,77 @@
 
 </div>
 
-<!-- TRANSACTION HISTORY -->
-
-<div class="card shadow-sm p-4">
-
-    <h4 class="mb-3">
-
-        Recent Transactions
-
-    </h4>
-
-    <div class="table-responsive">
-
-        <table class="table table-hover align-middle">
-
-            <thead class="table-dark">
-
-                <tr>
-
-                    <th>
-                        Project
-                    </th>
-
-                    <th>
-                        Material Code
-                    </th>
-
-                    <th>
-                        Material
-                    </th>
-
-                    <th>
-                        Type
-                    </th>
-
-                    <th>
-                        Qty
-                    </th>
-
-                    <th>
-                        Unit
-                    </th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                {% for transaction in transactions %}
-
-                <tr>
-
-                    <td>
-                        {{ transaction.project.project_name }}
-                    </td>
-
-                    <td>
-                        {{ transaction.material.material_code }}
-                    </td>
-
-                    <td>
-                        {{ transaction.material.material_name }}
-                    </td>
-
-                    <td>
-
-                        {% if transaction.transaction_type == 'IN' %}
-
-                        <span class="badge-in">
-                            IN
-                        </span>
-
-                        {% else %}
-
-                        <span class="badge-out">
-                            OUT
-                        </span>
-
-                        {% endif %}
-
-                    </td>
-
-                    <td>
-                        {{ transaction.quantity }}
-                    </td>
-
-                    <td>
-                        {{ transaction.material.unit }}
-                    </td>
-
-                </tr>
-
-                {% empty %}
-
-                <tr>
-
-                    <td
-                        colspan="6"
-                        class="text-center text-muted"
-                    >
-
-                        No Transactions Found
-
-                    </td>
-
-                </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</div>
+<!-- AUTO FILL SCRIPT -->
 
 <script>
 
-const materials = [
+    const materialInput =
+        document.getElementById(
+            'material_code'
+        );
 
-    {% for material in materials %}
+    const materialOptions =
+        document.querySelectorAll(
+            '#material_list option'
+        );
 
-    {
+    materialInput.addEventListener(
+        'input',
+        function () {
 
-        id: "{{ material.id }}",
+            const selectedValue =
+                this.value;
 
-        code: "{{ material.material_code|escapejs }}",
+            let found = false;
 
-        name: "{{ material.material_name|escapejs }}",
+            materialOptions.forEach(
+                function(option) {
 
-        size: "{{ material.size|escapejs }}",
+                    if (
+                        option.value ===
+                        selectedValue
+                    ) {
 
-        unit: "{{ material.unit|escapejs }}"
+                        document.getElementById(
+                            'material_name'
+                        ).value =
+                            option.dataset.name;
 
-    },
+                        document.getElementById(
+                            'material_size'
+                        ).value =
+                            option.dataset.size;
 
-    {% endfor %}
+                        document.getElementById(
+                            'material_unit'
+                        ).value =
+                            option.dataset.unit;
 
-];
+                        found = true;
 
-document.getElementById(
-    "materialCode"
-).addEventListener(
+                    }
 
-    "input",
-
-    function () {
-
-        let enteredCode =
-            this.value.trim();
-
-        let foundMaterial =
-            materials.find(
-
-                m =>
-                m.code === enteredCode
-
+                }
             );
 
-        if (foundMaterial) {
+            if (!found) {
 
-            document.getElementById(
-                "materialName"
-            ).value = foundMaterial.name;
+                document.getElementById(
+                    'material_name'
+                ).value = '';
 
-            document.getElementById(
-                "materialSize"
-            ).value = foundMaterial.size;
+                document.getElementById(
+                    'material_size'
+                ).value = '';
 
-            document.getElementById(
-                "materialUnit"
-            ).value = foundMaterial.unit;
+                document.getElementById(
+                    'material_unit'
+                ).value = '';
 
-            document.getElementById(
-                "materialId"
-            ).value = foundMaterial.id;
+            }
 
         }
-
-        else {
-
-            document.getElementById(
-                "materialName"
-            ).value = "";
-
-            document.getElementById(
-                "materialSize"
-            ).value = "";
-
-            document.getElementById(
-                "materialUnit"
-            ).value = "";
-
-            document.getElementById(
-                "materialId"
-            ).value = "";
-
-        }
-
-    }
-
-);
+    );
 
 </script>
 

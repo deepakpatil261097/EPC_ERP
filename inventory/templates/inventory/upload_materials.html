@@ -2,22 +2,142 @@
 
 {% block content %}
 
-<div class="card shadow-sm p-4">
+<!-- PAGE HEADER -->
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h3>
-            Upload Materials Excel
-        </h3>
+    <div>
 
-        <a
-            href="/materials/"
-            class="btn btn-secondary"
-        >
-            Back
-        </a>
+        <h2>
+
+            Upload Materials
+
+        </h2>
+
+        <p class="text-muted mb-0">
+
+            Upload bulk materials
+            using excel file
+
+        </p>
 
     </div>
+
+</div>
+
+<!-- MAIN CARD -->
+
+<div class="erp-card">
+
+    <!-- EXCEL FORMAT -->
+
+    <div class="mb-4">
+
+        <h5 class="mb-3">
+
+            Excel Format
+
+        </h5>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+
+                            material_code
+
+                        </th>
+
+                        <th>
+
+                            material_name
+
+                        </th>
+
+                        <th>
+
+                            category
+
+                        </th>
+
+                        <th>
+
+                            size
+
+                        </th>
+
+                        <th>
+
+                            unit
+
+                        </th>
+
+                        <th>
+
+                            min_stock
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+
+                            M001
+
+                        </td>
+
+                        <td>
+
+                            MS Plate
+
+                        </td>
+
+                        <td>
+
+                            Steel
+
+                        </td>
+
+                        <td>
+
+                            1000 X 2000
+
+                        </td>
+
+                        <td>
+
+                            Nos
+
+                        </td>
+
+                        <td>
+
+                            10
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- UPLOAD FORM -->
 
     <form
         method="POST"
@@ -38,7 +158,6 @@
                 type="file"
                 name="excel_file"
                 class="form-control"
-                accept=".xlsx"
                 required
             >
 
@@ -49,89 +168,11 @@
             class="btn btn-primary"
         >
 
-            Upload Excel
+            Upload Materials
 
         </button>
 
     </form>
-
-    <hr>
-
-    <h5>
-        Excel Format
-    </h5>
-
-    <div class="table-responsive">
-
-        <table class="table table-bordered">
-
-            <thead class="table-dark">
-
-                <tr>
-
-                    <th>
-                        material_code
-                    </th>
-
-                    <th>
-                        material_name
-                    </th>
-
-                    <th>
-                        category
-                    </th>
-
-                    <th>
-                        size
-                    </th>
-
-                    <th>
-                        unit
-                    </th>
-
-                    <th>
-                        min_stock
-                    </th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                <tr>
-
-                    <td>
-                        M-001
-                    </td>
-
-                    <td>
-                        Pipe SS316
-                    </td>
-
-                    <td>
-                        Pipe
-                    </td>
-
-                    <td>
-                        2"
-                    </td>
-
-                    <td>
-                        Nos
-                    </td>
-
-                    <td>
-                        10
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
 
 </div>
 
