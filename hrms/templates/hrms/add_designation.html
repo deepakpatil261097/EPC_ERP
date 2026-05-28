@@ -1,0 +1,143 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div class="mb-4">
+
+    <h2
+        style="
+            font-weight:700;
+            color:#111827;
+        "
+    >
+
+        Add Designation
+
+    </h2>
+
+    <p
+        class="text-muted mb-0"
+    >
+
+        Create new designation
+        master
+
+    </p>
+
+</div>
+
+<!-- FORM CARD -->
+
+<div class="erp-card">
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="row g-4">
+
+            <!-- DESIGNATION CODE -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+
+                    Designation Code
+
+                </label>
+
+                <input
+                    type="text"
+                    name="designation_code"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <!-- DESIGNATION NAME -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+
+                    Designation Name
+
+                </label>
+
+                <input
+                    type="text"
+                    name="designation_name"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <!-- STATUS -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+
+                    Status
+
+                </label>
+
+                <select
+                    class="form-select"
+                    disabled
+                >
+
+                    <option>
+
+                        Active
+
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- DESCRIPTION -->
+
+            <div class="col-md-12">
+
+                <label class="form-label">
+
+                    Description
+
+                </label>
+
+                <textarea
+                    name="description"
+                    class="form-control"
+                    rows="4"
+                ></textarea>
+
+            </div>
+
+        </div>
+
+        <!-- BUTTON -->
+
+        <div class="mt-4">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+
+                Save Designation
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

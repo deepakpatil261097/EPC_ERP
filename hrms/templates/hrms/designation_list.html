@@ -1,0 +1,171 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div
+    class="d-flex justify-content-between align-items-center mb-4"
+>
+
+    <div>
+
+        <h2
+            style="
+                font-weight:700;
+                color:#111827;
+            "
+        >
+
+            Designation Master
+
+        </h2>
+
+        <p
+            class="text-muted mb-0"
+        >
+
+            Manage all employee
+            designations
+
+        </p>
+
+    </div>
+
+    <a
+        href="/hr/add-designation/"
+        class="btn btn-primary"
+    >
+
+        <i class="bi bi-plus-lg"></i>
+
+        Add Designation
+
+    </a>
+
+</div>
+
+<!-- TABLE CARD -->
+
+<div class="erp-card">
+
+    <div class="table-responsive">
+
+        <table
+            class="table align-middle"
+        >
+
+            <thead>
+
+                <tr>
+
+                    <th>
+
+                        Designation Code
+
+                    </th>
+
+                    <th>
+
+                        Designation Name
+
+                    </th>
+
+                    <th>
+
+                        Description
+
+                    </th>
+
+                    <th>
+
+                        Status
+
+                    </th>
+
+                    <th>
+
+                        Action
+
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for designation in designations %}
+
+                <tr>
+
+                    <td>
+
+                        {{ designation.designation_code }}
+
+                    </td>
+
+                    <td>
+
+                        {{ designation.designation_name }}
+
+                    </td>
+
+                    <td>
+
+                        {{ designation.description }}
+
+                    </td>
+
+                    <td>
+
+                        <span
+                            class="badge text-bg-success"
+                        >
+
+                            {{ designation.status }}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="btn btn-sm btn-light border"
+                        >
+
+                            <i class="bi bi-pencil"></i>
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="text-center text-muted"
+                    >
+
+                        No designations found
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

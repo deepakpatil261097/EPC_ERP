@@ -1,0 +1,413 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div
+    class="d-flex justify-content-between align-items-center mb-4"
+>
+
+    <div>
+
+        <h2
+            style="
+                font-weight:700;
+                color:#111827;
+            "
+        >
+
+            Edit Employee
+
+        </h2>
+
+        <p
+            class="text-muted mb-0"
+        >
+
+            Update employee
+            information
+
+        </p>
+
+    </div>
+
+    <a
+        href="/hr/employee-info/{{ employee.id }}/"
+        class="btn btn-light border"
+    >
+
+        <i class="bi bi-arrow-left"></i>
+
+        Back
+
+    </a>
+
+</div>
+
+<!-- FORM -->
+
+<div class="erp-card">
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="row g-4">
+
+            <!-- EMPLOYEE CODE -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Employee Code
+
+                </label>
+
+                <input
+                    type="text"
+                    name="employee_code"
+                    class="form-control"
+                    value="{{ employee.employee_code }}"
+                    required
+                >
+
+            </div>
+
+            <!-- FIRST NAME -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    First Name
+
+                </label>
+
+                <input
+                    type="text"
+                    name="first_name"
+                    class="form-control"
+                    value="{{ employee.first_name }}"
+                    required
+                >
+
+            </div>
+
+            <!-- LAST NAME -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Last Name
+
+                </label>
+
+                <input
+                    type="text"
+                    name="last_name"
+                    class="form-control"
+                    value="{{ employee.last_name }}"
+                >
+
+            </div>
+
+            <!-- OFFICIAL EMAIL -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Official Email
+
+                </label>
+
+                <input
+                    type="email"
+                    name="email"
+                    class="form-control"
+                    value="{{ employee.email }}"
+                >
+
+            </div>
+
+            <!-- PERSONAL EMAIL -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Personal Email
+
+                </label>
+
+                <input
+                    type="email"
+                    name="personal_email"
+                    class="form-control"
+                    value="{{ employee.personal_email }}"
+                >
+
+            </div>
+
+            <!-- OFFICIAL MOBILE -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Official Mobile
+
+                </label>
+
+                <input
+                    type="text"
+                    name="mobile_no"
+                    class="form-control"
+                    value="{{ employee.mobile_no }}"
+                >
+
+            </div>
+
+            <!-- PERSONAL MOBILE -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Personal Mobile
+
+                </label>
+
+                <input
+                    type="text"
+                    name="personal_mobile"
+                    class="form-control"
+                    value="{{ employee.personal_mobile }}"
+                >
+
+            </div>
+
+            <!-- EMPLOYEE TYPE -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Employee Type
+
+                </label>
+
+                <select
+                    name="employee_type"
+                    class="form-select"
+                >
+
+                    <option
+                        value="Permanent"
+                        {% if employee.employee_type == 'Permanent' %}
+                        selected
+                        {% endif %}
+                    >
+
+                        Permanent
+
+                    </option>
+
+                    <option
+                        value="Contract"
+                        {% if employee.employee_type == 'Contract' %}
+                        selected
+                        {% endif %}
+                    >
+
+                        Contract
+
+                    </option>
+
+                    <option
+                        value="Trainee"
+                        {% if employee.employee_type == 'Trainee' %}
+                        selected
+                        {% endif %}
+                    >
+
+                        Trainee
+
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- DEPARTMENT -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Department
+
+                </label>
+
+                <select
+                    name="department"
+                    class="form-select"
+                    required
+                >
+
+                    {% for department in departments %}
+
+                    <option
+                        value="{{ department.id }}"
+                        {% if employee.department.id == department.id %}
+                        selected
+                        {% endif %}
+                    >
+
+                        {{ department.department_name }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- DESIGNATION -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Designation
+
+                </label>
+
+                <select
+                    name="designation"
+                    class="form-select"
+                    required
+                >
+
+                    {% for designation in designations %}
+
+                    <option
+                        value="{{ designation.id }}"
+                        {% if employee.designation.id == designation.id %}
+                        selected
+                        {% endif %}
+                    >
+
+                        {{ designation.designation_name }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- JOINING DATE -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Joining Date
+
+                </label>
+
+                <input
+                    type="date"
+                    name="joining_date"
+                    class="form-control"
+                    value="{{ employee.joining_date|date:'Y-m-d' }}"
+                >
+
+            </div>
+
+            <!-- CTC -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    CTC
+
+                </label>
+
+                <input
+                    type="number"
+                    step="0.01"
+                    name="ctc"
+                    class="form-control"
+                    value="{{ employee.ctc }}"
+                >
+
+            </div>
+
+            <!-- NOTICE PERIOD -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Notice Period
+
+                </label>
+
+                <input
+                    type="text"
+                    name="notice_period"
+                    class="form-control"
+                    value="{{ employee.notice_period }}"
+                >
+
+            </div>
+
+            <!-- REPORTING MANAGER -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Reporting Manager
+
+                </label>
+
+                <input
+                    type="text"
+                    name="reporting_manager"
+                    class="form-control"
+                    value="{{ employee.reporting_manager }}"
+                >
+
+            </div>
+
+        </div>
+
+        <!-- BUTTON -->
+
+        <div class="mt-4">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+
+                Update Employee
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

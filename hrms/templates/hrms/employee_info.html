@@ -1,0 +1,621 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div
+    class="d-flex justify-content-between align-items-center mb-4"
+>
+
+    <div>
+
+        <h2
+            style="
+                font-weight:700;
+                color:#111827;
+            "
+        >
+
+            Employee Information
+
+        </h2>
+
+        <p
+            class="text-muted mb-0"
+        >
+
+            Complete employee
+            profile and details
+
+        </p>
+
+    </div>
+
+    <div
+        class="d-flex gap-2"
+    >
+
+        <button
+            class="btn btn-light border"
+        >
+
+            <i class="bi bi-pencil"></i>
+
+            Edit
+
+        </button>
+
+        <button
+            class="btn btn-primary"
+        >
+
+            <i class="bi bi-download"></i>
+
+            Export
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- TOP PROFILE CARD -->
+
+<div class="erp-card mb-4">
+
+    <div class="row align-items-center">
+
+        <!-- PROFILE -->
+
+        <div class="col-md-4">
+
+            <div
+                class="d-flex align-items-center gap-4"
+            >
+
+                <!-- PROFILE IMAGE -->
+
+                <div
+                    style="
+                        width:90px;
+                        height:90px;
+                        border-radius:50%;
+                        background:#dbeafe;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        color:#2563eb;
+                        font-size:34px;
+                        font-weight:700;
+                    "
+                >
+
+                    {{ employee.first_name|slice:":1" }}
+
+                </div>
+
+                <!-- EMPLOYEE INFO -->
+
+                <div>
+
+                    <h4
+                        style="
+                            font-weight:700;
+                            margin-bottom:6px;
+                        "
+                    >
+
+                        {{ employee.first_name }}
+                        {{ employee.last_name }}
+
+                    </h4>
+
+                    <div
+                        class="text-muted mb-2"
+                    >
+
+                        {{ employee.designation.designation_name }}
+
+                    </div>
+
+                    <span
+                        class="badge text-bg-success"
+                    >
+
+                        {{ employee.status }}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- SUMMARY -->
+
+        <div class="col-md-8">
+
+            <div class="row g-4">
+
+                <div class="col-md-3">
+
+                    <div
+                        class="card-title-small"
+                    >
+
+                        Employee ID
+
+                    </div>
+
+                    <div
+                        style="
+                            font-weight:600;
+                        "
+                    >
+
+                        {{ employee.employee_code }}
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <div
+                        class="card-title-small"
+                    >
+
+                        Department
+
+                    </div>
+
+                    <div
+                        style="
+                            font-weight:600;
+                        "
+                    >
+
+                        {{ employee.department.department_name }}
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <div
+                        class="card-title-small"
+                    >
+
+                        Employee Type
+
+                    </div>
+
+                    <div
+                        style="
+                            font-weight:600;
+                        "
+                    >
+
+                        {{ employee.employee_type }}
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <div
+                        class="card-title-small"
+                    >
+
+                        Joining Date
+
+                    </div>
+
+                    <div
+                        style="
+                            font-weight:600;
+                        "
+                    >
+
+                        {{ employee.joining_date }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- TABS -->
+
+<ul
+    class="nav nav-tabs mb-4"
+    id="employeeTab"
+    role="tablist"
+>
+
+    <!-- BASIC -->
+
+    <li
+        class="nav-item"
+        role="presentation"
+    >
+
+        <button
+            class="nav-link active"
+            data-bs-toggle="tab"
+            data-bs-target="#basic"
+            type="button"
+        >
+
+            Basic Info
+
+        </button>
+
+    </li>
+
+    <!-- CONTACT -->
+
+    <li
+        class="nav-item"
+        role="presentation"
+    >
+
+        <button
+            class="nav-link"
+            data-bs-toggle="tab"
+            data-bs-target="#contact"
+            type="button"
+        >
+
+            Contact
+
+        </button>
+
+    </li>
+
+    <!-- EMPLOYMENT -->
+
+    <li
+        class="nav-item"
+        role="presentation"
+    >
+
+        <button
+            class="nav-link"
+            data-bs-toggle="tab"
+            data-bs-target="#employment"
+            type="button"
+        >
+
+            Employment
+
+        </button>
+
+    </li>
+
+    <!-- COMPENSATION -->
+
+    <li
+        class="nav-item"
+        role="presentation"
+    >
+
+        <button
+            class="nav-link"
+            data-bs-toggle="tab"
+            data-bs-target="#compensation"
+            type="button"
+        >
+
+            Compensation
+
+        </button>
+
+    </li>
+
+    <!-- SYSTEM ACCESS -->
+
+    <li
+        class="nav-item"
+        role="presentation"
+    >
+
+        <button
+            class="nav-link"
+            data-bs-toggle="tab"
+            data-bs-target="#access"
+            type="button"
+        >
+
+            System Access
+
+        </button>
+
+    </li>
+
+</ul>
+
+<!-- TAB CONTENT -->
+
+<div class="tab-content">
+
+    <!-- BASIC INFO -->
+
+    <div
+        class="tab-pane fade show active"
+        id="basic"
+    >
+
+        <div class="erp-card">
+
+            <div class="row g-4">
+
+                <div class="col-md-4">
+
+                    <div class="card-title-small">
+
+                        First Name
+
+                    </div>
+
+                    <div>
+
+                        {{ employee.first_name }}
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="card-title-small">
+
+                        Last Name
+
+                    </div>
+
+                    <div>
+
+                        {{ employee.last_name }}
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="card-title-small">
+
+                        Employee Type
+
+                    </div>
+
+                    <div>
+
+                        {{ employee.employee_type }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- CONTACT -->
+
+    <div
+        class="tab-pane fade"
+        id="contact"
+    >
+
+        <div class="erp-card">
+
+            <div class="row g-4">
+
+                <div class="col-md-4">
+
+                    <div class="card-title-small">
+
+                        Official Email
+
+                    </div>
+
+                    <div>
+
+                        {{ employee.email }}
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="card-title-small">
+
+                        Personal Email
+
+                    </div>
+
+                    <div>
+
+                        {{ employee.personal_email }}
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="card-title-small">
+
+                        Official Mobile
+
+                    </div>
+
+                    <div>
+
+                        {{ employee.mobile_no }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- EMPLOYMENT -->
+
+    <div
+        class="tab-pane fade"
+        id="employment"
+    >
+
+        <div class="erp-card">
+
+            <div class="row g-4">
+
+                <div class="col-md-4">
+
+                    <div class="card-title-small">
+
+                        Department
+
+                    </div>
+
+                    <div>
+
+                        {{ employee.department.department_name }}
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="card-title-small">
+
+                        Designation
+
+                    </div>
+
+                    <div>
+
+                        {{ employee.designation.designation_name }}
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="card-title-small">
+
+                        Reporting Manager
+
+                    </div>
+
+                    <div>
+
+                        {{ employee.reporting_manager }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- COMPENSATION -->
+
+    <div
+        class="tab-pane fade"
+        id="compensation"
+    >
+
+        <div class="erp-card">
+
+            <div class="row g-4">
+
+                <div class="col-md-4">
+
+                    <div class="card-title-small">
+
+                        CTC
+
+                    </div>
+
+                    <div>
+
+                        ₹ {{ employee.ctc }}
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div class="card-title-small">
+
+                        Notice Period
+
+                    </div>
+
+                    <div>
+
+                        {{ employee.notice_period }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SYSTEM ACCESS -->
+
+    <div
+        class="tab-pane fade"
+        id="access"
+    >
+
+        <div class="erp-card">
+
+            <div
+                class="alert alert-info mb-0"
+            >
+
+                System access and
+                ERP permissions
+                module coming soon.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div class="mb-4">
+
+    <h2
+        style="
+            font-weight:700;
+            color:#111827;
+        "
+    >
+
+        Add Department
+
+    </h2>
+
+    <p
+        class="text-muted mb-0"
+    >
+
+        Create new department
+        master
+
+    </p>
+
+</div>
+
+<!-- FORM CARD -->
+
+<div class="erp-card">
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="row g-4">
+
+            <!-- DEPARTMENT CODE -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+
+                    Department Code
+
+                </label>
+
+                <input
+                    type="text"
+                    name="department_code"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <!-- DEPARTMENT NAME -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+
+                    Department Name
+
+                </label>
+
+                <input
+                    type="text"
+                    name="department_name"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <!-- STATUS -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+
+                    Status
+
+                </label>
+
+                <select
+                    class="form-select"
+                    disabled
+                >
+
+                    <option>
+
+                        Active
+
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- DESCRIPTION -->
+
+            <div class="col-md-12">
+
+                <label class="form-label">
+
+                    Description
+
+                </label>
+
+                <textarea
+                    name="description"
+                    class="form-control"
+                    rows="4"
+                ></textarea>
+
+            </div>
+
+        </div>
+
+        <!-- BUTTON -->
+
+        <div class="mt-4">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+
+                Save Department
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}
