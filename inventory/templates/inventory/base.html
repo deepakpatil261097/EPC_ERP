@@ -474,14 +474,16 @@
 
         <!-- HR -->
 
-        <a href="#">
+<a
+    href="/hr/"
+    class="{% if '/hr/' in request.path %}active{% endif %}"
+>
 
-            <i class="bi bi-person-workspace"></i>
+    <i class="bi bi-person-workspace"></i>
 
-            Human Resources
+    Human Resources
 
-        </a>
-
+</a>
         <!-- REPORT -->
 
         <a href="#">

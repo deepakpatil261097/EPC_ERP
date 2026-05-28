@@ -9,7 +9,6 @@ from .models import (
 
     Department,
     Designation,
-    Role,
     Employee
 
 )
@@ -31,10 +30,6 @@ def hr_dashboard(request):
         Designation.objects.count()
     )
 
-    total_roles = (
-        Role.objects.count()
-    )
-
     context = {
 
         'total_employees':
@@ -45,9 +40,6 @@ def hr_dashboard(request):
 
         'total_designations':
         total_designations,
-
-        'total_roles':
-        total_roles,
 
     }
 
@@ -95,10 +87,6 @@ def add_employee(request):
         Designation.objects.all()
     )
 
-    roles = (
-        Role.objects.all()
-    )
-
     if request.method == "POST":
 
         Employee.objects.create(
@@ -119,8 +107,32 @@ def add_employee(request):
                 'email'
             ),
 
+            personal_email=request.POST.get(
+                'personal_email'
+            ),
+
             mobile_no=request.POST.get(
                 'mobile_no'
+            ),
+
+            personal_mobile=request.POST.get(
+                'personal_mobile'
+            ),
+
+            employee_type=request.POST.get(
+                'employee_type'
+            ),
+
+            ctc=request.POST.get(
+                'ctc'
+            ),
+
+            notice_period=request.POST.get(
+                'notice_period'
+            ),
+
+            reporting_manager=request.POST.get(
+                'reporting_manager'
             ),
 
             department=Department.objects.get(
@@ -132,12 +144,6 @@ def add_employee(request):
             designation=Designation.objects.get(
                 id=request.POST.get(
                     'designation'
-                )
-            ),
-
-            role=Role.objects.get(
-                id=request.POST.get(
-                    'role'
                 )
             ),
 
@@ -156,8 +162,6 @@ def add_employee(request):
         'departments': departments,
 
         'designations': designations,
-
-        'roles': roles,
 
     }
 

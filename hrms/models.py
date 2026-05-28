@@ -53,13 +53,7 @@ class Department(models.Model):
 
     def __str__(self):
 
-        return (
-
-            f"{self.department_code}"
-            f" - "
-            f"{self.department_name}"
-
-        )
+        return f"{self.department_code} - {self.department_name}"
 
 
 # DESIGNATION MASTER
@@ -114,74 +108,7 @@ class Designation(models.Model):
 
     def __str__(self):
 
-        return (
-
-            f"{self.designation_code}"
-            f" - "
-            f"{self.designation_name}"
-
-        )
-
-
-# ROLE MASTER
-
-class Role(models.Model):
-
-    STATUS_CHOICES = [
-
-        ('Active', 'Active'),
-
-        ('Inactive', 'Inactive')
-
-    ]
-
-    role_code = models.CharField(
-
-        max_length=50,
-
-        unique=True
-
-    )
-
-    role_name = models.CharField(
-
-        max_length=255
-
-    )
-
-    description = models.TextField(
-
-        blank=True,
-
-        null=True
-
-    )
-
-    status = models.CharField(
-
-        max_length=20,
-
-        choices=STATUS_CHOICES,
-
-        default='Active'
-
-    )
-
-    created_date = models.DateTimeField(
-
-        auto_now_add=True
-
-    )
-
-    def __str__(self):
-
-        return (
-
-            f"{self.role_code}"
-            f" - "
-            f"{self.role_name}"
-
-        )
+        return f"{self.designation_code} - {self.designation_name}"
 
 
 # EMPLOYEE MASTER
@@ -230,9 +157,69 @@ class Employee(models.Model):
 
     )
 
+    personal_email = models.EmailField(
+
+        blank=True,
+
+        null=True
+
+    )
+
     mobile_no = models.CharField(
 
         max_length=20,
+
+        blank=True,
+
+        null=True
+
+    )
+
+    personal_mobile = models.CharField(
+
+        max_length=20,
+
+        blank=True,
+
+        null=True
+
+    )
+
+    employee_type = models.CharField(
+
+        max_length=50,
+
+        blank=True,
+
+        null=True
+
+    )
+
+    ctc = models.DecimalField(
+
+        max_digits=12,
+
+        decimal_places=2,
+
+        blank=True,
+
+        null=True
+
+    )
+
+    notice_period = models.CharField(
+
+        max_length=100,
+
+        blank=True,
+
+        null=True
+
+    )
+
+    reporting_manager = models.CharField(
+
+        max_length=255,
 
         blank=True,
 
@@ -255,18 +242,6 @@ class Employee(models.Model):
     designation = models.ForeignKey(
 
         Designation,
-
-        on_delete=models.SET_NULL,
-
-        blank=True,
-
-        null=True
-
-    )
-
-    role = models.ForeignKey(
-
-        Role,
 
         on_delete=models.SET_NULL,
 
@@ -302,10 +277,4 @@ class Employee(models.Model):
 
     def __str__(self):
 
-        return (
-
-            f"{self.employee_code}"
-            f" - "
-            f"{self.first_name}"
-
-        )
+        return f"{self.employee_code} - {self.first_name}"
