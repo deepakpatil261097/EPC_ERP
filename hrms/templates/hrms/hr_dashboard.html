@@ -1,0 +1,225 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2>
+
+            Human Resource Dashboard
+
+        </h2>
+
+        <p class="text-muted mb-0">
+
+            Manage employees,
+            departments,
+            designations
+            and roles
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- TOP CARDS -->
+
+<div class="row g-4">
+
+    <!-- EMPLOYEES -->
+
+    <div class="col-md-3">
+
+        <div class="erp-card">
+
+            <div class="card-title-small">
+
+                Employees
+
+            </div>
+
+            <div class="card-value">
+
+                {{ total_employees }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- DEPARTMENTS -->
+
+    <div class="col-md-3">
+
+        <div class="erp-card">
+
+            <div class="card-title-small">
+
+                Departments
+
+            </div>
+
+            <div class="card-value">
+
+                {{ total_departments }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- DESIGNATIONS -->
+
+    <div class="col-md-3">
+
+        <div class="erp-card">
+
+            <div class="card-title-small">
+
+                Designations
+
+            </div>
+
+            <div class="card-value">
+
+                {{ total_designations }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ROLES -->
+
+    <div class="col-md-3">
+
+        <div class="erp-card">
+
+            <div class="card-title-small">
+
+                Roles
+
+            </div>
+
+            <div class="card-value">
+
+                {{ total_roles }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- HR MODULES -->
+
+<div class="row g-4 mt-2">
+
+    <!-- EMPLOYEE MASTER -->
+
+    <div class="col-md-4">
+
+        <div class="erp-card">
+
+            <h5 class="mb-3">
+
+                Employee Master
+
+            </h5>
+
+            <p class="text-muted">
+
+                Manage employee
+                records and details
+
+            </p>
+
+            <a
+                href="/hr/employees/"
+                class="btn btn-primary"
+            >
+
+                Open
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- ADD EMPLOYEE -->
+
+    <div class="col-md-4">
+
+        <div class="erp-card">
+
+            <h5 class="mb-3">
+
+                Add Employee
+
+            </h5>
+
+            <p class="text-muted">
+
+                Create new employee
+                records
+
+            </p>
+
+            <a
+                href="/hr/add-employee/"
+                class="btn btn-primary"
+            >
+
+                Open
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- DEPARTMENT -->
+
+    <div class="col-md-4">
+
+        <div class="erp-card">
+
+            <h5 class="mb-3">
+
+                Departments
+
+            </h5>
+
+            <p class="text-muted">
+
+                Manage department
+                structure
+
+            </p>
+
+            <button
+                class="btn btn-secondary"
+            >
+
+                Coming Soon
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

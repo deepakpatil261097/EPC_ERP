@@ -1,0 +1,277 @@
+{% extends 'inventory/base.html' %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h2>
+
+            Add Employee
+
+        </h2>
+
+        <p class="text-muted mb-0">
+
+            Create new employee
+            records
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- FORM -->
+
+<div class="erp-card">
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <div class="row g-4">
+
+            <!-- EMPLOYEE CODE -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Employee Code
+
+                </label>
+
+                <input
+                    type="text"
+                    name="employee_code"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <!-- FIRST NAME -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    First Name
+
+                </label>
+
+                <input
+                    type="text"
+                    name="first_name"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <!-- LAST NAME -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Last Name
+
+                </label>
+
+                <input
+                    type="text"
+                    name="last_name"
+                    class="form-control"
+                >
+
+            </div>
+
+            <!-- OFFICIAL EMAIL -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Official Email
+
+                </label>
+
+                <input
+                    type="email"
+                    name="email"
+                    class="form-control"
+                >
+
+            </div>
+
+            <!-- MOBILE -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Mobile Number
+
+                </label>
+
+                <input
+                    type="text"
+                    name="mobile_no"
+                    class="form-control"
+                >
+
+            </div>
+
+            <!-- DEPARTMENT -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Department
+
+                </label>
+
+                <select
+                    name="department"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+
+                        Select
+
+                    </option>
+
+                    {% for department in departments %}
+
+                    <option value="{{ department.id }}">
+
+                        {{ department.department_name }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- DESIGNATION -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Designation
+
+                </label>
+
+                <select
+                    name="designation"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+
+                        Select
+
+                    </option>
+
+                    {% for designation in designations %}
+
+                    <option value="{{ designation.id }}">
+
+                        {{ designation.designation_name }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- ROLE -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Role
+
+                </label>
+
+                <select
+                    name="role"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+
+                        Select
+
+                    </option>
+
+                    {% for role in roles %}
+
+                    <option value="{{ role.id }}">
+
+                        {{ role.role_name }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- JOINING DATE -->
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+
+                    Joining Date
+
+                </label>
+
+                <input
+                    type="date"
+                    name="joining_date"
+                    class="form-control"
+                >
+
+            </div>
+
+        </div>
+
+        <!-- BUTTON -->
+
+        <div class="mt-4">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+
+                Save Employee
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}
