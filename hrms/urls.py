@@ -14,6 +14,8 @@ from .views import (
 
     delete_employee,
 
+    export_employees,
+
     department_list,
 
     add_department,
@@ -26,10 +28,14 @@ from .views import (
 
 urlpatterns = [
 
+    # DASHBOARD
+
     path(
         '',
         hr_dashboard
     ),
+
+    # EMPLOYEE
 
     path(
         'employees/',
@@ -57,6 +63,13 @@ urlpatterns = [
     ),
 
     path(
+        'export-employees/',
+        export_employees
+    ),
+
+    # DEPARTMENT
+
+    path(
         'departments/',
         department_list
     ),
@@ -65,6 +78,8 @@ urlpatterns = [
         'add-department/',
         add_department
     ),
+
+    # DESIGNATION
 
     path(
         'designations/',

@@ -1,8 +1,14 @@
 from django.shortcuts import (
-
     render,
     redirect
+)
 
+from django.core.paginator import Paginator
+
+from .models import (
+    Employee,
+    Department,
+    Designation
 )
 
 from .models import (
@@ -57,7 +63,9 @@ def hr_dashboard(request):
 def employee_list(request):
 
     employees = (
-        Employee.objects.all().order_by('-id')
+        Employee.objects
+        .all()
+        .order_by('-id')
     )
 
     # SEARCH
@@ -107,6 +115,23 @@ def employee_list(request):
         employees = employees.filter(
             status=status
         )
+
+    # PAGINATION
+
+    paginator = Paginator(
+        employees,
+        25
+    )
+
+    page_number = request.GET.get(
+        'page'
+    )
+
+    employees = paginator.get_page(
+        page_number
+    )
+
+    # KPI
 
     total_employees = (
         Employee.objects.count()
@@ -161,11 +186,12 @@ def employee_list(request):
     return render(
 
         request,
+
         'hrms/employee_list.html',
+
         context
 
     )
-
 # ADD EMPLOYEE
 
 def add_employee(request):
@@ -611,3 +637,116 @@ def delete_employee(request, id):
     return redirect(
         '/hr/employees/'
     )
+    # EXPORT EMPLOYEES TO EXCEL
+
+def export_employees(request):
+
+    workbook = openpyxl.Workbook()
+
+    worksheet = workbook.active
+
+    worksheet.title = "Employees"
+
+    headers = [
+
+        "Employee Code",
+        "Employee Name",
+        "Department",
+        "Designation",
+        "Email",
+        "Mobile",
+        "Status",
+        "Joining Date",
+
+    ]
+
+    for col_num, header in enumerate(
+        headers,
+        1
+    ):
+
+        worksheet.cell(
+            row=1,
+            column=col_num
+        ).value = header
+
+    employees = Employee.objects.all()
+
+    row_num = 2
+
+    for employee in employees:
+
+        worksheet.cell(
+            row=row_num,
+            column=1
+        ).value = employee.employee_code
+
+        worksheet.cell(
+            row=row_num,
+            column=2
+        ).value = (
+            f"{employee.first_name} "
+            f"{employee.last_name}"
+        )
+
+        worksheet.cell(
+            row=row_num,
+            column=3
+        ).value = (
+            employee.department.department_name
+            if employee.department
+            else ""
+        )
+
+        worksheet.cell(
+            row=row_num,
+            column=4
+        ).value = (
+            employee.designation.designation_name
+            if employee.designation
+            else ""
+        )
+
+        worksheet.cell(
+            row=row_num,
+            column=5
+        ).value = employee.email
+
+        worksheet.cell(
+            row=row_num,
+            column=6
+        ).value = employee.mobile_no
+
+        worksheet.cell(
+            row=row_num,
+            column=7
+        ).value = employee.status
+
+        worksheet.cell(
+            row=row_num,
+            column=8
+        ).value = str(
+            employee.joining_date
+        )
+
+        row_num += 1
+
+    response = HttpResponse(
+
+        content_type=
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+    )
+
+    response[
+        "Content-Disposition"
+    ] = (
+        'attachment; '
+        'filename=Employee_Master.xlsx'
+    )
+
+    workbook.save(
+        response
+    )
+
+    return response
