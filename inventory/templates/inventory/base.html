@@ -151,6 +151,11 @@
             font-size: 18px;
 
         }
+        .sidebar .submenu-link {
+
+    font-size: 14px;
+
+}
 
         /* MAIN CONTENT */
 
@@ -472,18 +477,58 @@
 
         </a>
 
-        <!-- HR -->
+      <!-- HR -->
+
+<div style="margin:5px 12px;">
+
+   <a
+    href="#"
+    onclick="toggleHRMenu(); return false;"
+    class="{% if '/hr/' in request.path %}active{% endif %}"
+>
+
+    <i class="bi bi-person-workspace"></i>
+
+    Human Resources
+
+</a>
+
+   <div
+    id="hrSubmenu"
+    style="
+        display:none;
+        margin-left:25px;
+        margin-top:8px;
+        margin-bottom:10px;
+    "
+>
 
         <a
-            href="/hr/"
-            class="{% if '/hr/' in request.path %}active{% endif %}"
-        >
+    href="/hr/"
+    class="submenu-link"
+>
+    HR Dashboard
+</a>
 
-            <i class="bi bi-person-workspace"></i>
+        <a href="/hr/employees/">Employee List</a>
 
-            Human Resources
+        <a href="/hr/add-employee/">Add Employee</a>
 
-        </a>
+        <a href="/hr/departments/">Departments</a>
+
+        <a href="/hr/designations/">Designations</a>
+
+        <a href="#">Attendance</a>
+
+        <a href="#">Leave Management</a>
+
+        <a href="#">Payroll</a>
+
+        <a href="#">Reports</a>
+
+    </div>
+
+</div>
 
         <!-- REPORT -->
 
@@ -602,6 +647,26 @@
     <!-- BOOTSTRAP JS -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+function toggleHRMenu() {
+
+    var menu =
+        document.getElementById("hrSubmenu");
+
+    if (menu.style.display === "none") {
+
+        menu.style.display = "block";
+
+    } else {
+
+        menu.style.display = "none";
+
+    }
+
+}
+
+</script>
 
 </body>
 
